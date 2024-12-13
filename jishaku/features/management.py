@@ -171,7 +171,7 @@ class ManagementFeature(Feature):
                 if _ < 5:
                     text += average_str
                 else:
-                    text += f"**{average_str)**"
+                    text += f"**{average_str}**"
             else:
                 text += "\n\nNo readings yet."
 
