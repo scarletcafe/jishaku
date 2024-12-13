@@ -167,8 +167,11 @@ class ManagementFeature(Feature):
 
             if api_readings:
                 average, stddev = mean_stddev(api_readings)
-
-                text += f"\n\nAverage: {average * 1000:.2f} \N{PLUS-MINUS SIGN} {stddev * 1000:.2f}ms"
+                average_str = f"\n\nAverage: {average * 1000:.2f} \N{PLUS-MINUS SIGN} {stddev * 1000:.2f}ms"
+                if _ < 5:
+                    text += average_str
+                else:
+                    text += f"**{average_str)**"
             else:
                 text += "\n\nNo readings yet."
 
