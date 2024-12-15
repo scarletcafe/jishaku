@@ -160,7 +160,7 @@ class ManagementFeature(Feature):
 
         # We do 6 iterations here.
         # This gives us 5 visible readings, because a request can't include the stats for itself.
-        for _ in range(6):
+        for i in range(6):
             # First generate the text
             text = "Calculating round-trip time...\n\n"
             text += "\n".join(f"Reading {index + 1}: {reading * 1000:.2f}ms" for index, reading in enumerate(api_readings))
@@ -168,7 +168,7 @@ class ManagementFeature(Feature):
             if api_readings:
                 average, stddev = mean_stddev(api_readings)
                 average_str = f"\n\nAverage: {average * 1000:.2f} \N{PLUS-MINUS SIGN} {stddev * 1000:.2f}ms"
-                if _ < 5:
+                if i < 5:
                     text += average_str
                 else:
                     text += f"**{average_str}**"
