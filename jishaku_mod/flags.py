@@ -18,7 +18,7 @@ import typing
 
 import discord
 
-from jishaku.types import ContextA
+from jishaku_mod.types import ContextA
 
 ENABLED_SYMBOLS = ("true", "t", "yes", "y", "on", "1")
 DISABLED_SYMBOLS = ("false", "f", "no", "n", "off", "0")

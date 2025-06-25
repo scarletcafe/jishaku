@@ -15,15 +15,15 @@ import typing
 
 import discord
 
-from jishaku.types import ContextA
+from jishaku_mod.types import ContextA
 
 try:
     import yt_dlp as youtube_dl  # type: ignore
 except ImportError:
     import youtube_dl  # type: ignore
 
-from jishaku.features.baseclass import Feature
-from jishaku.features.voice import VoiceFeature
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.features.voice import VoiceFeature
 
 BASIC_OPTS = {
     'format': 'webm[abr>0]/bestaudio/best',

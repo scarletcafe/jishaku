@@ -15,7 +15,7 @@ import typing
 import discord
 import pytest
 
-from jishaku.repl.inspections import all_inspections
+from jishaku_mod.repl.inspections import all_inspections
 from tests.utils import sentinel
 
 

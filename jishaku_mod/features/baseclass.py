@@ -17,19 +17,25 @@ import contextlib
 import typing
 from datetime import datetime, timezone
 
-from discord.ext import commands
+# from discord.ext import commands
 from typing_extensions import Concatenate, ParamSpec
 
-from jishaku.types import BotT, ContextA
+from jishaku_mod.types import BotT, ContextA, BotTT, CogT, Cog
 
 __all__ = (
     'Feature',
     'CommandTask'
 )
+T = typing.TypeVar('T')
+if typing.TYPE_CHECKING:
+    P = typing.ParamSpec('P')
+else:
+    P = typing.TypeVar('P')
 
-
-_ConvertedCommand = commands.Command['Feature', typing.Any, typing.Any]
-_ConvertedGroup = commands.Group['Feature', typing.Any, typing.Any]
+class Command(typing.Generic[CogT, P, T]):...
+class Group(typing.Generic[CogT, P, T]):...
+_ConvertedCommand = Command['Feature', typing.Any, typing.Any]
+_ConvertedGroup = Group['Feature', typing.Any, typing.Any]
 
 
 _FeatureCommandToCommand = typing.Callable[
@@ -47,8 +53,8 @@ _FeatureCommandToGroup = typing.Callable[
     ]
 ]
 
-T = typing.TypeVar('T')
-P = ParamSpec('P')
+# T = typing.TypeVar('T')
+# P = ParamSpec('P')
 GenericFeature = typing.TypeVar('GenericFeature', bound='Feature')
 
 
@@ -62,7 +68,7 @@ class CommandTask(typing.NamedTuple):
     task: typing.Optional['asyncio.Task[typing.Any]']
 
 
-class Feature(commands.Cog):
+class Feature(Cog):
     """
     Baseclass defining feature components of the jishaku cog.
     """
@@ -111,9 +117,9 @@ class Feature(commands.Cog):
             self,
             association_map: typing.Dict[
                 'Feature.Command[GenericFeature, typing.Any, typing.Any]',
-                'commands.Command[GenericFeature, typing.Any, typing.Any]',
+                'Command[GenericFeature, typing.Any, typing.Any]',
             ]
-        ) -> 'commands.Command[GenericFeature, P, T]':
+        ) -> 'Command[GenericFeature, P, T]':
             """
             Attempts to convert this Feature.Command into either a commands.Command or commands.Group
             """
@@ -124,7 +130,7 @@ class Feature(commands.Cog):
 
                 parent = association_map[self.parent_instance]
 
-                if not isinstance(parent, commands.Group):
+                if not isinstance(parent, Group):
                     raise RuntimeError("A Features.Command declared as a parent was associated with a non-commands.Group")
 
                 command_type = parent.group if self.has_children else parent.command

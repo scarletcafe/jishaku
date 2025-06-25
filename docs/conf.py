@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-from jishaku.meta import __version__
+from jishaku_mod.meta import __version__
 
 project = 'jishaku'
 copyright = '2021, Devon (scarletcafe) R'

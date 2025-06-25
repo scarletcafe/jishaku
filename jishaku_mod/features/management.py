@@ -21,12 +21,12 @@ from urllib.parse import urlencode
 import discord
 from discord.ext import commands
 
-from jishaku.features.baseclass import Feature
-from jishaku.flags import Flags
-from jishaku.math import mean_stddev
-from jishaku.modules import ExtensionConverter
-from jishaku.repl import inspections
-from jishaku.types import ContextA
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.flags import Flags
+from jishaku_mod.math import mean_stddev
+from jishaku_mod.modules import ExtensionConverter
+from jishaku_mod.repl import inspections
+from jishaku_mod.types import ContextA
 
 
 class ManagementFeature(Feature):

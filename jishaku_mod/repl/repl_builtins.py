@@ -16,7 +16,7 @@ import typing
 import aiohttp
 import discord
 
-from jishaku.types import ContextA
+from jishaku_mod.types import ContextA
 
 
 async def http_get_bytes(*args: typing.Any, **kwargs: typing.Any) -> bytes:

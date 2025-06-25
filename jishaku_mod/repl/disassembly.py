@@ -20,7 +20,7 @@ import typing
 import import_expression  # type: ignore
 import opcode
 
-from jishaku.repl.scope import Scope
+from jishaku_mod.repl.scope import Scope
 
 CORO_CODE = """
 import asyncio

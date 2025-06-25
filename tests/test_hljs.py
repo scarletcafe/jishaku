@@ -11,7 +11,7 @@ jishaku.hljs test
 
 import pytest
 
-from jishaku.hljs import get_language
+from jishaku_mod.hljs import get_language
 
 
 @pytest.mark.parametrize(

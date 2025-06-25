@@ -11,7 +11,7 @@ jishaku converter test
 
 import inspect
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
+from jishaku_mod.codeblocks import Codeblock, codeblock_converter
 
 
 def test_codeblock_converter():

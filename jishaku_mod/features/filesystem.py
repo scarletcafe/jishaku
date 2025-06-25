@@ -19,11 +19,11 @@ import re
 import aiohttp
 import discord
 
-from jishaku.exception_handling import ReplResponseReactor
-from jishaku.features.baseclass import Feature
-from jishaku.hljs import get_language, guess_file_traits
-from jishaku.paginators import PaginatorInterface, WrappedFilePaginator, use_file_check
-from jishaku.types import ContextA
+from jishaku_mod.exception_handling import ReplResponseReactor
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.hljs import get_language, guess_file_traits
+from jishaku_mod.paginators import PaginatorInterface, WrappedFilePaginator, use_file_check
+from jishaku_mod.types import ContextA
 
 
 class FilesystemFeature(Feature):

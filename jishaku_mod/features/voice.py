@@ -17,8 +17,8 @@ import discord
 import discord.opus
 import discord.voice_client
 
-from jishaku.features.baseclass import Feature
-from jishaku.types import ContextA
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.types import ContextA
 
 
 class VoiceFeature(Feature):

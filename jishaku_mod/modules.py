@@ -18,7 +18,7 @@ import typing
 from braceexpand import braceexpand
 from discord.ext import commands
 
-from jishaku.types import BotT, ContextA
+from jishaku_mod.types import BotT, ContextA
 
 __all__ = ('find_extensions_in', 'resolve_extensions', 'package_version', 'ExtensionConverter')
 

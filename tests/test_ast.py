@@ -11,7 +11,7 @@ jishaku ast tree generation test
 
 import inspect
 
-from jishaku.repl.disassembly import create_tree
+from jishaku_mod.repl.disassembly import create_tree
 
 
 def test_ast_missing_fields():

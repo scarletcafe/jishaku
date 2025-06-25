@@ -14,7 +14,7 @@ from io import BytesIO
 
 import pytest
 
-from jishaku.paginators import FilePaginator, WrappedPaginator
+from jishaku_mod.paginators import FilePaginator, WrappedPaginator
 
 
 def test_file_paginator():

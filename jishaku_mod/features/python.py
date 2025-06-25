@@ -21,16 +21,16 @@ import typing
 
 import discord
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
-from jishaku.exception_handling import ReplResponseReactor
-from jishaku.features.baseclass import Feature
-from jishaku.flags import Flags
-from jishaku.formatting import MultilineFormatter
-from jishaku.functools import AsyncSender
-from jishaku.math import format_bargraph, format_stddev
-from jishaku.paginators import PaginatorInterface, WrappedPaginator, use_file_check
-from jishaku.repl import AsyncCodeExecutor, Scope, all_inspections, create_tree, disassemble, get_adaptive_spans, get_var_dict_from_ctx
-from jishaku.types import ContextA
+from jishaku_mod.codeblocks import Codeblock, codeblock_converter
+from jishaku_mod.exception_handling import ReplResponseReactor
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.flags import Flags
+from jishaku_mod.formatting import MultilineFormatter
+from jishaku_mod.functools import AsyncSender
+from jishaku_mod.math import format_bargraph, format_stddev
+from jishaku_mod.paginators import PaginatorInterface, WrappedPaginator, use_file_check
+from jishaku_mod.repl import AsyncCodeExecutor, Scope, all_inspections, create_tree, disassemble, get_adaptive_spans, get_var_dict_from_ctx
+from jishaku_mod.types import ContextA
 
 try:
     import line_profiler  # type: ignore

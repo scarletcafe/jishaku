@@ -15,7 +15,7 @@ import typing
 
 from discord.ext import commands
 
-from jishaku.paginators import PaginatorEmbedInterface, PaginatorInterface
+from jishaku_mod.paginators import PaginatorEmbedInterface, PaginatorInterface
 
 
 class DefaultPaginatorHelp(commands.DefaultHelpCommand):

@@ -16,16 +16,16 @@ This variant overrides behavior using a Feature.
 
 from discord.ext import commands
 
-import jishaku
-from jishaku.types import ContextT
+import jishaku_mod
+from jishaku_mod.types import ContextT
 
 
-class ThirdPartyFeature(jishaku.Feature):
+class ThirdPartyFeature(jishaku_mod.Feature):
     """
     overriding feature for test
     """
 
-    @jishaku.Feature.Command(name="jishaku", aliases=["jsk"], invoke_without_command=True, ignore_extra=False)
+    @jishaku_mod.Feature.Command(name="jishaku", aliases=["jsk"], invoke_without_command=True, ignore_extra=False)
     async def jsk(self, ctx: ContextT):
         """
         override test
@@ -33,7 +33,7 @@ class ThirdPartyFeature(jishaku.Feature):
         return await ctx.send("The behavior of this command has been overridden with a third party feature.")
 
 
-class Magnet1(ThirdPartyFeature, *jishaku.OPTIONAL_FEATURES, *jishaku.STANDARD_FEATURES):  # pylint: disable=too-few-public-methods
+class Magnet1(ThirdPartyFeature, *jishaku_mod.OPTIONAL_FEATURES, *jishaku_mod.STANDARD_FEATURES):  # pylint: disable=too-few-public-methods
     """
     The extended Jishaku cog
     """

@@ -15,8 +15,8 @@ import typing
 
 import discord
 
-from jishaku.features.baseclass import Feature
-from jishaku.types import ContextA
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.types import ContextA
 
 T = typing.TypeVar('T')
 

@@ -14,7 +14,7 @@ import sys
 
 import pytest
 
-from jishaku.shell import ShellReader
+from jishaku_mod.shell import ShellReader
 
 
 @pytest.mark.asyncio

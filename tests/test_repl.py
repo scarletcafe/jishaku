@@ -15,7 +15,7 @@ import typing
 
 import pytest
 
-from jishaku.repl import AsyncCodeExecutor, Scope, get_parent_var, get_var_dict_from_ctx
+from jishaku_mod.repl import AsyncCodeExecutor, Scope, get_parent_var, get_var_dict_from_ctx
 from tests.utils import mock_ctx
 
 

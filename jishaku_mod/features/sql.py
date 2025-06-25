@@ -19,10 +19,10 @@ import typing
 import discord
 from tabulate import tabulate
 
-from jishaku.exception_handling import ReplResponseReactor
-from jishaku.features.baseclass import Feature
-from jishaku.paginators import PaginatorInterface, WrappedPaginator, use_file_check
-from jishaku.types import ContextA
+from jishaku_mod.exception_handling import ReplResponseReactor
+from jishaku_mod.features.baseclass import Feature
+from jishaku_mod.paginators import PaginatorInterface, WrappedPaginator, use_file_check
+from jishaku_mod.types import ContextA
 
 T = typing.TypeVar('T')
 

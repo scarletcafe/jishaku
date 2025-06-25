@@ -21,7 +21,7 @@ import discord
 from discord.ext import commands
 from typing_extensions import ParamSpec
 
-from jishaku.flags import Flags
+from jishaku_mod.flags import Flags
 
 
 async def send_traceback(
