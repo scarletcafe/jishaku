@@ -12,6 +12,7 @@ jishaku test utils
 import asyncio
 import contextlib
 import random
+import typing
 from unittest import mock
 from unittest.mock import patch
 
@@ -65,7 +66,7 @@ def nested_mocks(ctx, standards, coros):
 
 
 @contextlib.contextmanager
-def mock_ctx(bot: commands.Bot = None):
+def mock_ctx(bot: typing.Optional[commands.Bot] = None):
     ctx = mock.MagicMock(name='ctx')
 
     standard_mocks = []

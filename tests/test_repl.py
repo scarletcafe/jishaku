@@ -159,7 +159,7 @@ async def test_executor_builtins(scope: Scope):
 
     assert 'ensure_builtins' in scope.globals, "Checking function remains defined"
     assert callable(scope.globals['ensure_builtins']), "Checking defined is callable"
-    assert scope.globals['ensure_builtins']() == ValueError, "Checking defined return consistent"
+    assert scope.globals['ensure_builtins']() is ValueError, "Checking defined return consistent"
 
 
 @pytest.mark.asyncio
