@@ -13,12 +13,12 @@ Functions pertaining to the disassembly of Python code
 
 import ast
 import dis
+import opcode
 import sys
 import types
 import typing
 
 import import_expression  # type: ignore
-import opcode
 
 from jishaku.repl.scope import Scope
 
