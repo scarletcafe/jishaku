@@ -149,4 +149,4 @@ jobs:
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.10.3
+        uses: pypa/gh-action-pypi-publish@v1.13.0
