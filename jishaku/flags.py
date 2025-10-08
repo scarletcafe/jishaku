@@ -98,11 +98,6 @@ class FlagMeta(type):
     ):
         attrs['flag_map'] = {}
 
-        # https://docs.python.org/3/library/annotationlib.html#annotationlib-metaclass
-        # From 3.14 onwards, __annotations__ is a data descriptor that is
-        # not included in the class namespace. Instead, the compiler defines
-        # an __annotate__ attribute at compile time which can be called to
-        # evaluate annotations.
         if '__annotations__' in attrs:
             annotations = attrs['__annotations__']
 
@@ -114,6 +109,10 @@ class FlagMeta(type):
                 )
 
         elif sys.version_info >= (3, 14):
+            # https://docs.python.org/3/library/annotationlib.html#annotationlib-metaclass
+            # From 3.14 onwards, __annotations__ is a data descriptor not included
+            # in the class namespace. Instead, the compiler defines an __annotate__
+            # function we can call to evaluate annotations.
             import annotationlib
 
             annotate = annotationlib.get_annotate_from_class_namespace(attrs)
