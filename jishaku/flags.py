@@ -105,6 +105,14 @@ class FlagMeta(type):
         # evaluate annotations.
         if '__annotations__' in attrs:
             annotations = attrs['__annotations__']
+
+            first = next(iter(annotations.values()))
+            if isinstance(first, str):
+                raise RuntimeError(
+                    f'{name} has stringified annotations; does the module '
+                    f'contain from __future__ import annotations?'
+                )
+
         elif sys.version_info >= (3, 14):
             import annotationlib
 
