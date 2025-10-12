@@ -20,6 +20,7 @@ jobs:
           - {version: '3.11'}
           - {version: '3.12'}
           - {version: '3.13'}
+          - {version: '3.14'}
         discord-py:
           - {NAME: 'pypi', PIP_TARGET: 'discord.py[voice]'}
           - {NAME: 'git', PIP_TARGET: 'discord.py[voice] @ git+https://github.com/Rapptz/discord.py@master'}
@@ -102,10 +103,10 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Set up Python 3.13
+      - name: Set up Python 3.14
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'  # Watch as I let this get handled as a float again
+          python-version: '3.14'  # Watch as I let this get handled as a float again
 
       - name: Install dependencies
         shell: bash
@@ -123,7 +124,7 @@ jobs:
           # Very cool.
           # We don't have any native code so using the latest Ubuntu artifact should be OK.
           #pattern: distributions-*
-          pattern: distributions-ubuntu-latest-3.13-pypi
+          pattern: distributions-ubuntu-latest-3.14-pypi
           merge-multiple: true
           path: dist
 
