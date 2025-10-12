@@ -8,7 +8,7 @@ Version 2.6.1
 
 This release is a patch release to fix an issue caused by changes in Python 3.14's annotation handling.
 
-- Fall back to `annotationlib` to generate `jishaku.Flags` from its annotations on versions affected by `PEP 649 <https://peps.python.org/pep-0649/>` (`#247 <https://github.com/scarletcafe/jishaku/pull/247>`)
+- Fall back to `annotationlib` to generate `jishaku.Flags` from its annotations on versions affected by `PEP 649 <https://peps.python.org/pep-0649/>`_ (`#247 <https://github.com/scarletcafe/jishaku/pull/247>`_)
 
 Version 2.6.0
 -------------
