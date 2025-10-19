@@ -3,6 +3,13 @@
 What's new?
 ================
 
+Version 2.6.2
+-------------
+
+This release is a patch release to fix a previously unreported issue with `jsk dis` on Python 3.13+
+
+- Fix issue with `dis.Instruction._disassemble` being removed in CPython 3.13+ (issue `#248 <https://github.com/scarletcafe/jishaku/issues/248>`_, fixed in `cbd225e`)
+
 Version 2.6.1
 -------------
 
