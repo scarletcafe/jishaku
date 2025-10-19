@@ -76,6 +76,59 @@ def wrap_code(code: str, args: str = '') -> ast.Module:
     return mod
 
 
+def format_instruction(
+    instruction: dis.Instruction,
+    lineno_width: int = 4,
+    mark_as_current: bool = False,
+    offset_width: int = 4
+) -> str:
+    # This code is largely the same as the CPython 3.12 implementation of Instruction._disassemble:
+    #  https://github.com/python/cpython/blob/3.12/Lib/dis.py
+    # This function was removed in 3.13 and replaced by one that only supports printing to the console:
+    #  https://github.com/python/cpython/blob/3.13/Lib/dis.py#L460
+    # Hence the 3.12 version is reproduced here.
+    opname_width: int = 20
+    oparg_width: int = 5
+
+    fields: typing.List[str] = []
+
+    # Column: Source code line number
+    if lineno_width:
+        if instruction.starts_line:
+            lineno_fmt = "%%%dd" % lineno_width
+            fields.append(lineno_fmt % instruction.starts_line)
+        else:
+            fields.append(' ' * lineno_width)
+
+    # Column: Current instruction indicator
+    if mark_as_current:
+        fields.append('-->')
+    else:
+        fields.append('   ')
+
+    # Column: Jump target marker
+    if instruction.is_jump_target:
+        fields.append('>>')
+    else:
+        fields.append('  ')
+
+    # Column: Instruction offset from start of code sequence
+    fields.append(repr(instruction.offset).rjust(offset_width))
+
+    # Column: Opcode name
+    fields.append(instruction.opname.ljust(opname_width))
+
+    # Column: Opcode argument
+    if instruction.arg is not None:
+        fields.append(repr(instruction.arg).rjust(oparg_width))
+
+        # Column: Opcode argument details
+        if instruction.argrepr:
+            fields.append('(' + instruction.argrepr + ')')
+
+    return ' '.join(fields).rstrip()
+
+
 def disassemble(
     code: str,
     scope: typing.Optional[Scope] = None,
@@ -100,14 +153,12 @@ def disassemble(
     ):
         instruction: dis.Instruction
 
-        if instruction.starts_line is not None and instruction.offset > 0:
+        if instruction.starts_line and instruction.offset > 0:
             yield ''
 
-        # pylint: disable=protected-access
-        yield instruction._disassemble(  # type: ignore
-            4, False, 4
+        yield format_instruction(
+            instruction, 4, False, 4
         )
-        # pylint: enable=protected-access
 
 
 TREE_CONTINUE = ('\N{BOX DRAWINGS HEAVY VERTICAL AND RIGHT}', '\N{BOX DRAWINGS HEAVY VERTICAL}')
