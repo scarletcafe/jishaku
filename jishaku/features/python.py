@@ -435,13 +435,13 @@ class PythonFeature(Feature):
 
                             send(await self.jsk_python_result_handling(ctx, result))
 
-                        formatter = MultilineFormatter(argument.content)
+                        formatter = MultilineFormatter(argument.content, add_newline=True)
 
                         for (
                             index,
                             (instruction, line, span, specialized, adaptive)
                         ) in enumerate(get_adaptive_spans(executor.function.__code__)):  # pylint: disable=protected-access
-                            if line - 1 < len(formatter.lines):
+                            if 0 <= line - 1 < len(formatter.lines):
                                 formatter.add_annotation(
                                     line - 1,
                                     instruction.opname,

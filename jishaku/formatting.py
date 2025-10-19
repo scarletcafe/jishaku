@@ -233,7 +233,10 @@ class MultilineFormatter:
     """
     A wrapper around LineFormatter that allows annotating a full block of text.
     """
-    def __init__(self, text: str):
+    def __init__(self, text: str, add_newline: bool = False):
+        if add_newline:
+            text = text + "\n"
+
         self.lines: typing.List[LineFormatter] = [
             LineFormatter(line) for line in text.splitlines()
         ]
@@ -249,6 +252,9 @@ class MultilineFormatter:
         """
         Add an annotation to a line of this formatter.
         The order in which the annotations are added matters.
+
+        Argument `line` must be a valid index to :attr:`MultilineFormatter.lines`,
+        else this will raise `IndexError`.
         """
 
         self.lines[line].add_annotation(text, span, annotation_ansi, text_foreground, text_background)
