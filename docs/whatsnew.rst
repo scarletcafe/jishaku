@@ -3,6 +3,13 @@
 What's new?
 ================
 
+Version 2.6.3
+-------------
+
+This release is a patch release to fix an issue with erroneous indexing of `MultilineFormatter` in `jsk specialist` under some conditions.
+
+- Increase sanity checking for `MultilineFormatter` to prevent spurious errors (issue `#249 <https://github.com/scarletcafe/jishaku/issues/249>`_, fixed in `61e3aa9`)
+
 Version 2.6.2
 -------------
 
