@@ -171,6 +171,17 @@ class InvocationFeature(Feature):
         msg_ctx = await self.bot.get_context(target, cls=ctx.__class__)
         msg_ctx = await copy_context_with(msg_ctx, author=ctx.author)
 
+        # Prevent infinite recursions by prohibiting rerunning rerun commands
+        if msg_ctx.command and msg_ctx.view:
+            prev = msg_ctx.view.index
+
+            msg_ctx.view.skip_ws()
+            sub = msg_ctx.view.get_word()
+            if sub and self.jsk_rerun.parent.get_command(sub) is self.jsk_rerun:
+                return await ctx.send("Cannot rerun a rerun command.")
+
+            msg_ctx.view.index = prev
+
         # If no user overrides were provided, default to the original message's author
         if not any(isinstance(o, (discord.Member, discord.User)) for o in overrides):
             overrides = [target.author, *overrides]
