@@ -139,6 +139,32 @@ class InvocationFeature(Feature):
         await alt_ctx.command.invoke(alt_ctx)
         return
 
+    @Feature.Command(parent="jsk", name="rerun", aliases=["rr", "rerun!", "rr!"])
+    async def jsk_rerun(
+        self,
+        ctx: ContextT,
+        overrides: commands.Greedy[OVERRIDE_SIGNATURE],
+        *,
+        message: typing.Optional[commands.MessageConverter] = None,
+    ):
+        """
+        Re-run a command from a replied message or message link, optionally with a different user, channel or thread and/or bypassing checks and cooldowns
+
+        Users will try to resolve to a Member, but will use a User if it can't find one.
+
+        Piggybacks off of `jsk override` so it accepts all the same overrides and has the same fundamental behaviours.
+        """
+
+        target = message or (ctx.message.reference and ctx.message.reference.resolved)
+
+        if not isinstance(target, discord.Message):
+            return await ctx.send("Reply to a message or provide a message link.")
+
+        if not any(isinstance(o, (discord.Member, discord.User)) for o in overrides):
+            overrides = [target.author, *overrides]
+
+        await self.jsk_override(ctx, overrides, command_string=target.content.lstrip(ctx.prefix or ""))
+
     @Feature.Command(parent="jsk", name="repeat")
     async def jsk_repeat(self, ctx: ContextT, times: int, *, command_string: str):
         """
