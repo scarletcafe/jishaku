@@ -165,10 +165,17 @@ class InvocationFeature(Feature):
         if not isinstance(target, discord.Message):
             return await ctx.send("Reply to a message or provide a message link.")
 
+        # Setting the target's author to the current author and then overriding it back as the original
+        # target's author later in exec feels redundant but we don't want to run the exec command itself
+        # as the target's author, just in case.
+        msg_ctx = await self.bot.get_context(target, cls=ctx.__class__)
+        msg_ctx = await copy_context_with(msg_ctx, author=ctx.author)
+
+        # If no user overrides were provided, default to the original message's author
         if not any(isinstance(o, (discord.Member, discord.User)) for o in overrides):
             overrides = [target.author, *overrides]
 
-        await self.jsk_override(ctx, overrides, command_string=target.content.lstrip(ctx.prefix or ""))
+        await self.jsk_override(msg_ctx, overrides, command_string=target.content.lstrip(ctx.prefix or ""))
 
     @Feature.Command(parent="jsk", name="repeat")
     async def jsk_repeat(self, ctx: ContextT, times: int, *, command_string: str):
