@@ -363,6 +363,19 @@ Commands
 
     If `exec!` is used instead of `exec`, the command will bypass all checks and cooldowns, directly triggering the callback.
 
+
+.. py:function:: jsk rerun [member_and_or_channel...] [message]
+
+    Re-runs an already ran command, optionally as if it were ran by someone else and/or in a different channel.
+
+    This allows you to rerun commands commands from a replied message or the message argument (e.g. url, id, etc. to be converted by commands.MessageConverter). Useful for re-executing perhaps after making changes (to the code, message's content, etc), without having to copy-paste content or resend attachments and/or other contextual entities, optionally as another user or in another channel.
+
+    You can provide a channel to redirect command location, a user to redirect command origin, or both.
+
+    If `rerun!` is used instead of `rerun`, the command will bypass all checks and cooldowns, directly triggering the callback.
+
+    This command piggybacks off of the `jsk exec` command so it has the same overrides and fundamental behaviors.
+
 .. py:function:: jsk permtrace <channel> [targets...]
 
     Emulates Discord's permission calculation system to create a breakdown of where certain permissions for a member come from.

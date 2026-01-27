@@ -211,11 +211,16 @@ You can also import the module to use the command development utilities.
         </td>
         <td>
             <h4>&gt; <code>jishaku exec [member and/or channel...] &lt;command string&gt;</code></h4>
+            <h4>&gt; <code>jishaku rerun [member and/or channel...] [message]</code></h4>
             <h4>&gt; <code>jishaku debug &lt;command string&gt;</code></h4>
             <h4>&gt; <code>jishaku repeat &lt;times&gt; &lt;command string&gt;</code></h4>
             These commands serve as command control for other commands.
             <br><br>
             <code>jishaku exec</code> allows you to execute a command as another user, in another channel, or both. Using aliases with a postfix exclamation mark (such as <code>jsk exec! ...</code>) executes the command bypassing checks and cooldowns.
+            <br><br>
+            <code>jishaku rerun</code> allows you to re-run an already ran command (either by replying to the message or by passing in the message arg), optionally as another user, in another channel, or both. Using aliases with a postfix exclamation mark (such as <code>jsk rerun! ...</code>) re-runs the command bypassing checks and cooldowns.
+            <br><br>
+            Useful for re-running commands for debugging purposes without having to copy-paste content or resend attachments and other contextual entities.
             <br><br>
             <code>jishaku debug</code> executes a command with an exception wrapper and a timer. This allows you to quickly get feedback on reproducable command errors and slowdowns.
             <br><br>
