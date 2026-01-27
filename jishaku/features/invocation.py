@@ -105,9 +105,9 @@ class InvocationFeature(Feature):
             return
 
         for override in overrides:
-            if isinstance(override, discord.User):
+            if isinstance(override, (discord.User, discord.Member)):
                 # This is a user
-                if ctx.guild:
+                if isinstance(override, discord.User) and ctx.guild:
                     # Try to upgrade to a Member instance
                     # This used to be done by a Union converter, but doing it like this makes
                     #  the command more compatible with chaining, e.g. `jsk in .. jsk su ..`
