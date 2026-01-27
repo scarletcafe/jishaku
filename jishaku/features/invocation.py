@@ -170,6 +170,7 @@ class InvocationFeature(Feature):
         # as the target's author, just in case.
         msg_ctx = await self.bot.get_context(target, cls=ctx.__class__)
         msg_ctx = await copy_context_with(msg_ctx, author=ctx.author)
+        msg_ctx.invoked_with = ctx.invoked_with
 
         # Prevent infinite recursions by prohibiting rerunning rerun commands
         if msg_ctx.command and msg_ctx.view:
