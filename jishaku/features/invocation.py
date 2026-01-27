@@ -155,7 +155,12 @@ class InvocationFeature(Feature):
         Piggybacks off of `jsk override` so it accepts all the same overrides and has the same fundamental behaviors.
         """
 
-        target = message or (ctx.message.reference and ctx.message.reference.resolved)
+        target = message
+        if target is None:
+            ref = ctx.message.reference
+            if ref is not None:
+                with contextlib.suppress(commands.MessageNotFound):
+                    target = await commands.MessageConverter().convert(ctx, ref.jump_url)
 
         if not isinstance(target, discord.Message):
             return await ctx.send("Reply to a message or provide a message link.")
