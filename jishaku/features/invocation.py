@@ -152,7 +152,7 @@ class InvocationFeature(Feature):
 
         Users will try to resolve to a Member, but will use a User if it can't find one.
 
-        Piggybacks off of `jsk override` so it accepts all the same overrides and has the same fundamental behaviours.
+        Piggybacks off of `jsk override` so it accepts all the same overrides and has the same fundamental behaviors.
         """
 
         target = message or (ctx.message.reference and ctx.message.reference.resolved)
