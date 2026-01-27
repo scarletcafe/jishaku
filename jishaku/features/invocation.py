@@ -139,7 +139,7 @@ class InvocationFeature(Feature):
         await alt_ctx.command.invoke(alt_ctx)
         return
 
-    @Feature.Command(parent="jsk", name="rerun", aliases=["rr", "rerun!", "rr!"])
+    @Feature.Command(parent="jsk", name="rerun", aliases=["rr", "rerun!", "rr!", "re", "re!"])
     async def jsk_rerun(
         self,
         ctx: ContextT,
