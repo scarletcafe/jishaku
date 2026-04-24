@@ -59,8 +59,6 @@ jobs:
     - name: Create distributions and install wheel
       shell: bash
       run: |
-        export tag_name="${GITHUB_REF##*/}"
-
         # Substitute README assets with direct GitHub links
         sed -i'.original' -e "s/src=\".github\/assets/src=\"https:\/\/raw.githubusercontent.com\/scarletcafe\/jishaku\/$(git rev-parse HEAD)\/.github\/assets/g" README.md
         rm -f README.md.original
@@ -94,7 +92,7 @@ jobs:
       contents: write
       # Required for OIDC
       id-token: write
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/versions/v')
 
     steps:
       - name: Checkout repository
@@ -113,7 +111,6 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y hub
           python -m pip install --upgrade pip setuptools wheel
-          export tag_name="${GITHUB_REF##*/}"
           pip install -U ".[publish]"
 
       - name: Download artifacts
@@ -134,13 +131,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
-          export tag_name="${GITHUB_REF##*/}"
+          export tag_name="${GITHUB_REF##*/tags/}"
           python create_dist_summary.py
           assets=()
           for asset in ./dist/*.{whl,tar.gz}; do
             assets+=("-a" "$asset")
           done
-          tag_name="${GITHUB_REF##*/}"
+          tag_name="${GITHUB_REF##*/tags/}"
           hub release create "${assets[@]}" -F ./dist/DIST_SUMMARY.md "$tag_name"
           rm ./dist/*.md
 
