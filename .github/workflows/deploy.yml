@@ -139,8 +139,10 @@ jobs:
           for asset in ./dist/*.{whl,tar.gz}; do
             assets+=("$asset")
           done
+
           tag_name="${GITHUB_REF##*/tags/}"
-          gh release create "${tag_name}" --draft --notes-file ./dist/DIST_SUMMARY.md "${assets[@]}"
+          release_name="$(cat ./dist/RELEASE_NAME.md)"
+          gh release create "${tag_name}" --draft --title "${release_name}" --notes-file ./dist/RELEASE_SUMMARY.md "${assets[@]}"
           gh release edit "${tag_name}" --draft=false
           rm ./dist/*.md
 
