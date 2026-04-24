@@ -136,12 +136,8 @@ jobs:
           set -x
           export tag_name="${GITHUB_REF##*/tags/}"
           python create_dist_summary.py
-          assets=()
-          for asset in ./dist/*.{whl,tar.gz}; do
-            assets+=("-a" "$asset")
-          done
           tag_name="${GITHUB_REF##*/tags/}"
-          gh release create "${tag_name}" --draft --notes-file ./dist/DIST_SUMMARY.md "${assets[@]}"
+          gh release create "${tag_name}" --draft --notes-file ./dist/DIST_SUMMARY.md "./dist/*.{whl,tar.gz}"
           gh release edit "${tag_name}" --draft=false
           rm ./dist/*.md
 
