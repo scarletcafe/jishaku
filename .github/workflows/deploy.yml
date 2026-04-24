@@ -26,12 +26,12 @@ jobs:
           - {NAME: 'git', PIP_TARGET: 'discord.py[voice] @ git+https://github.com/Rapptz/discord.py@master'}
     name: "${{ matrix.os }} CPython ${{ matrix.python.version }} with ${{ matrix.discord-py.NAME }} discord.py"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python.version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python.version }}
 
@@ -80,7 +80,7 @@ jobs:
         cd docs && make html
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: distributions-${{ matrix.os }}-${{ matrix.python.version }}-${{ matrix.discord-py.NAME }}
         path: dist/*
@@ -98,13 +98,13 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: true
 
       - name: Set up Python 3.14
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.14'  # Watch as I let this get handled as a float again
 
@@ -117,7 +117,7 @@ jobs:
           pip install -U ".[publish]"
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           # There is currently a bug where download-artifact downloading multiple files of the same name corrupts the file.
           # https://github.com/actions/download-artifact/issues/298
@@ -146,4 +146,4 @@ jobs:
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.13.0
+        uses: pypa/gh-action-pypi-publish@v1.14.0
