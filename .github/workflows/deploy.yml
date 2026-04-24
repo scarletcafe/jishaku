@@ -59,6 +59,8 @@ jobs:
     - name: Create distributions and install wheel
       shell: bash
       run: |
+        export version_name="${GITHUB_REF##*/tags/versions/v}"
+
         # Substitute README assets with direct GitHub links
         sed -i'.original' -e "s/src=\".github\/assets/src=\"https:\/\/raw.githubusercontent.com\/scarletcafe\/jishaku\/$(git rev-parse HEAD)\/.github\/assets/g" README.md
         rm -f README.md.original
@@ -129,7 +131,7 @@ jobs:
       - name: Publish wheels as release artifacts on GitHub
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
           export tag_name="${GITHUB_REF##*/tags/}"
@@ -139,8 +141,8 @@ jobs:
             assets+=("-a" "$asset")
           done
           tag_name="${GITHUB_REF##*/tags/}"
-          hub release create -d "${assets[@]}" -F ./dist/DIST_SUMMARY.md "$tag_name"
-          hub release edit --draft=false "$tag_name"
+          gh release create "${tag_name}" --draft --notes-file ./dist/DIST_SUMMARY.md "${assets[@]}"
+          gh release edit "${tag_name}" --draft=false
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
