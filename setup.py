@@ -74,7 +74,7 @@ try:
         COMMIT_HASH, err = process.communicate()
 
         if COMMIT_HASH:
-            match = re.match(r'(\d).(\d).(\d)(a|b|rc)?', os.getenv('tag_name') or "")
+            match = re.match(r'(\d).(\d).(\d)(a|b|rc)?', os.getenv('version_name') or "")
 
             if (match and match[4]) or not match:
                 version += ('' if match else 'a') + COMMIT_COUNT.decode('utf-8').strip() + '+g' + COMMIT_HASH.decode('utf-8').strip()

@@ -111,6 +111,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y hub
           python -m pip install --upgrade pip setuptools wheel
+          export version_name="${GITHUB_REF##*/tags/versions/v}"
           pip install -U ".[publish]"
 
       - name: Download artifacts
@@ -138,7 +139,8 @@ jobs:
             assets+=("-a" "$asset")
           done
           tag_name="${GITHUB_REF##*/tags/}"
-          hub release create "${assets[@]}" -F ./dist/DIST_SUMMARY.md "$tag_name"
+          hub release create -d "${assets[@]}" -F ./dist/DIST_SUMMARY.md "$tag_name"
+          hub release edit --draft=false "$tag_name"
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
