@@ -3,12 +3,12 @@
 What's new?
 ================
 
-Version 2.7.3
+Version 2.7.4
 -------------
 
 This version is functionally identical to 2.7.0, but is the first functional release to use immutable GitHub releases for better security.
 
-Version 2.7.1 & 2.7.2
+Version 2.7.1-2.7.3
 ---------------------
 
 These versions were the first versions to trial immutable releases.
