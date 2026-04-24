@@ -3,6 +3,11 @@
 What's new?
 ================
 
+Version 2.7.1
+-------------
+
+This version is functionally identical to 2.7.0, but is the first release to use immutable GitHub releases for better security.
+
 Version 2.7.0
 -------------
 
