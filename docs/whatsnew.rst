@@ -3,10 +3,16 @@
 What's new?
 ================
 
+Version 2.7.2
+-------------
+
+This version is functionally identical to 2.7.1 and 2.7.0, but is the first functional release to use immutable GitHub releases for better security.
+
 Version 2.7.1
 -------------
 
-This version is functionally identical to 2.7.0, but is the first release to use immutable GitHub releases for better security.
+This version was the first version to trial immutable releases.
+Due to deployment issues caused by scripts not being written for immutable releases, this version was incomplete and is no longer available.
 
 Version 2.7.0
 -------------
