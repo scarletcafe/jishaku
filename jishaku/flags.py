@@ -181,7 +181,7 @@ class Flags(metaclass=FlagMeta):  # pylint: disable=too-few-public-methods
     NO_UNDERSCORE: bool
 
     # The scope prefix, i.e. the prefix that appears before Jishaku's builtin variables in REPL sessions.
-    # It is recommended that you set this programatically.
+    # It is recommended that you set this programmatically.
     SCOPE_PREFIX: str = lambda flags: '' if flags.NO_UNDERSCORE else '_'  # type: ignore
 
     # Flag to indicate whether to always use paginators over relying on Discord's file preview
