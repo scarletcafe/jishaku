@@ -170,3 +170,20 @@ async def test_var_dict(scope: Scope):
         assert scope.globals['_ctx'] is ctx
         assert scope.globals['_bot'] is ctx.bot
         assert scope.globals['_message'] is ctx.message
+
+
+@pytest.mark.asyncio
+async def test_executor_delete_retained_variable():
+    retained_scope = Scope()
+    async for _ in AsyncCodeExecutor("value = 42", retained_scope):
+        pass
+
+    assert retained_scope.globals['value'] == 42
+
+    async for _ in AsyncCodeExecutor("del value", retained_scope):
+        pass
+
+    assert 'value' not in retained_scope.globals
+    with pytest.raises(NameError):
+        async for _ in AsyncCodeExecutor("value", retained_scope):
+            pass

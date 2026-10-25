@@ -111,10 +111,7 @@ class KeywordTransformer(ast.NodeTransformer):
                         ),
                         ops=[
                             # in
-                            ast.In(
-                                lineno=node.lineno,
-                                col_offset=node.col_offset
-                            )
+                            ast.In()
                         ],
                         comparators=[
                             # globals()

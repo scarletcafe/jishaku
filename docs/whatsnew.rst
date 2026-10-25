@@ -3,6 +3,11 @@
 What's new?
 ================
 
+Unreleased
+-------------
+
+- Fix ``del`` statements in the Python REPL failing on Python 3.15 due to unsupported AST constructor arguments.
+
 Version 2.7.5
 -------------
 
