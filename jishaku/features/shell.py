@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.shell
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,9 +84,9 @@ class ShellFeature(Feature):
 
             if self.reader.stdin and self.reader.stdin.writable():
                 if sys.platform == "win32":
-                    self.reader.stdin.write(f"{value}\r\n".encode('utf-8'))
+                    self.reader.stdin.write(f"{value}\r\n".encode())
                 else:
-                    self.reader.stdin.write(f"{value}\r".encode('utf-8'))
+                    self.reader.stdin.write(f"{value}\r".encode())
                 self.reader.stdin.flush()
 
                 await interaction.response.send_message(

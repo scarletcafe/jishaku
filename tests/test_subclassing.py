@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku subclassing functionality test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

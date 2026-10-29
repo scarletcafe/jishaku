@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.codeblocks
 ~~~~~~~~~~~~~~~~~~
@@ -23,7 +21,7 @@ class Codeblock(typing.NamedTuple):
     Represents a parsed codeblock from codeblock_converter
     """
 
-    language: typing.Optional[str]
+    language: str | None
     content: str
 
 
@@ -45,12 +43,12 @@ def codeblock_converter(argument: str) -> Codeblock:
         return Codeblock(None, argument)
 
     # keep a small buffer of the last chars we've seen
-    last: typing.Deque[str] = collections.deque(maxlen=3)
+    last: collections.deque[str] = collections.deque(maxlen=3)
     backticks = 0
     in_language = False
     in_code = False
-    language: typing.List[str] = []
-    code: typing.List[str] = []
+    language: list[str] = []
+    code: list[str] = []
 
     for char in argument:
         if char == '`' and not in_code and not in_language:

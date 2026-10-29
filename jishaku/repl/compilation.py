@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.compilation
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,15 +112,15 @@ class AsyncCodeExecutor:  # pylint: disable=too-few-public-methods
         print(total)
     """
 
-    __slots__ = ('args', 'arg_names', 'code', 'loop', 'scope', 'source', '_function')
+    __slots__ = ('_function', 'arg_names', 'args', 'code', 'loop', 'scope', 'source')
 
     def __init__(
         self,
         code: str,
-        scope: typing.Optional[Scope] = None,
-        arg_dict: typing.Optional[typing.Dict[str, typing.Any]] = None,
-        convertables: typing.Optional[typing.Dict[str, str]] = None,
-        loop: typing.Optional[asyncio.BaseEventLoop] = None,
+        scope: Scope | None = None,
+        arg_dict: dict[str, typing.Any] | None = None,
+        convertables: dict[str, str] | None = None,
+        loop: asyncio.BaseEventLoop | None = None,
         auto_return: bool = True,
     ):
         self.args = [self]
@@ -153,10 +151,7 @@ class AsyncCodeExecutor:  # pylint: disable=too-few-public-methods
         self._function = None
 
     @property
-    def function(self) -> typing.Callable[..., typing.Union[
-        typing.Awaitable[typing.Any],
-        typing.AsyncGenerator[typing.Any, typing.Any]
-    ]]:
+    def function(self) -> typing.Callable[..., typing.Awaitable[typing.Any] | typing.AsyncGenerator[typing.Any, typing.Any]]:
         """
         The function object produced from compiling the code.
         If the code has not been compiled yet, it will be done upon first access.
@@ -165,12 +160,12 @@ class AsyncCodeExecutor:  # pylint: disable=too-few-public-methods
         if self._function is not None:
             return self._function
 
-        exec(compile(self.code, '<repl>', 'exec'), self.scope.globals, self.scope.locals)  # pylint: disable=exec-used
+        exec(compile(self.code, '<repl>', 'exec'), self.scope.globals, self.scope.locals)  # ruff: ignore[S102]
         self._function = self.scope.locals.get('_repl_coroutine') or self.scope.globals['_repl_coroutine']
 
         return self._function
 
-    def create_linecache(self) -> typing.List[str]:
+    def create_linecache(self) -> list[str]:
         """
         Populates the line cache with the current source.
         Can be performed before printing a traceback to show correct source lines.
@@ -187,15 +182,12 @@ class AsyncCodeExecutor:  # pylint: disable=too-few-public-methods
 
         return lines
 
-    def __aiter__(self) -> typing.AsyncGenerator[typing.Any, typing.Any]:
+    def __aiter__(self) -> typing.AsyncIterator[typing.Any]:
         return self.traverse(self.function)
 
     async def traverse(
         self,
-        func: typing.Callable[..., typing.Union[
-            typing.Awaitable[typing.Any],
-            typing.AsyncGenerator[typing.Any, typing.Any]
-        ]]
+        func: typing.Callable[..., typing.Awaitable[typing.Any] | typing.AsyncGenerator[typing.Any, typing.Any]]
     ) -> typing.AsyncGenerator[typing.Any, typing.Any]:
         """
         Traverses an async function or generator, yielding each result.

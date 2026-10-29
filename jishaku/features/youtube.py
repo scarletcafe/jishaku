@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.youtube
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,7 +37,7 @@ class BasicYouTubeDLSource(discord.FFmpegPCMAudio):
 
     def __init__(self, url: str, download: bool = False):
         ytdl = youtube_dl.YoutubeDL(BASIC_OPTS)
-        info: typing.Dict[str, typing.Any] = ytdl.extract_info(url, download=download)  # type: ignore
+        info: dict[str, typing.Any] = ytdl.extract_info(url, download=download)  # type: ignore
         super().__init__(info['url'])
 
 

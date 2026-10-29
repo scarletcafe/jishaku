@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.invocation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,9 +26,9 @@ from jishaku.models import copy_context_with
 from jishaku.paginators import PaginatorInterface, WrappedPaginator, use_file_check
 from jishaku.types import ContextA, ContextT
 
-UserIDConverter = commands.IDConverter[typing.Union[discord.Member, discord.User]]
+UserIDConverter = commands.IDConverter[discord.Member | discord.User]
 ChannelIDConverter = commands.IDConverter[
-    typing.Union[discord.abc.GuildChannel, discord.abc.PrivateChannel, discord.Thread]
+    discord.abc.GuildChannel | discord.abc.PrivateChannel | discord.Thread
 ]
 
 
@@ -39,7 +37,7 @@ class SlimUserConverter(UserIDConverter):  # pylint: disable=too-few-public-meth
     Identical to the stock UserConverter, but does not perform plaintext name checks.
     """
 
-    async def convert(self, ctx: ContextA, argument: str) -> typing.Union[discord.Member, discord.User]:
+    async def convert(self, ctx: ContextA, argument: str) -> discord.Member | discord.User:
         """Converter method"""
         match = self._get_id_match(argument) or re.match(r"<@!?([0-9]{15,20})>$", argument)  # type: ignore
 
@@ -65,7 +63,7 @@ class SlimChannelConverter(ChannelIDConverter):  # pylint: disable=too-few-publi
 
     async def convert(
         self, ctx: ContextA, argument: str
-    ) -> typing.Union[discord.abc.GuildChannel, discord.abc.PrivateChannel, discord.Thread]:
+    ) -> discord.abc.GuildChannel | discord.abc.PrivateChannel | discord.Thread:
         """Converter method"""
         match = self._get_id_match(argument) or re.match(r"<#([0-9]{15,20})>$", argument)
 
@@ -86,7 +84,7 @@ class InvocationFeature(Feature):
     Feature containing the command invocation related commands
     """
 
-    OVERRIDE_SIGNATURE = typing.Union[SlimUserConverter, SlimChannelConverter]
+    OVERRIDE_SIGNATURE = SlimUserConverter | SlimChannelConverter
 
     @Feature.Command(parent="jsk", name="override", aliases=["execute", "exec", "override!", "execute!", "exec!"])
     async def jsk_override(self, ctx: ContextT, overrides: commands.Greedy[OVERRIDE_SIGNATURE], *, command_string: str):
@@ -96,7 +94,7 @@ class InvocationFeature(Feature):
         Users will try to resolve to a Member, but will use a User if it can't find one.
         """
 
-        kwargs: typing.Dict[str, typing.Any] = {}
+        kwargs: dict[str, typing.Any] = {}
 
         if ctx.prefix:
             kwargs["content"] = ctx.prefix + command_string.lstrip("/")
@@ -145,7 +143,7 @@ class InvocationFeature(Feature):
         ctx: ContextT,
         overrides: commands.Greedy[OVERRIDE_SIGNATURE],
         *,
-        message: typing.Optional[commands.MessageConverter] = None,
+        message: commands.MessageConverter | None = None,
     ):
         """
         Re-run a command from a replied message or message link, optionally with a different user, channel or thread and/or bypassing checks and cooldowns

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku converter test
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -59,7 +57,7 @@ def test_file_paginator():
 
     # test OOB
     with pytest.raises(ValueError):
-        FilePaginator(BytesIO("one\ntwo\nthree\nfour".encode('utf-8')), line_span=(-1, 20))
+        FilePaginator(BytesIO(b"one\ntwo\nthree\nfour"), line_span=(-1, 20))
 
 
 def test_wrapped_paginator():

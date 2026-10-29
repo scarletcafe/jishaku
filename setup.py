@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 MIT License
 
@@ -29,7 +27,6 @@ import os
 import pathlib
 import re
 import subprocess
-import typing
 
 from setuptools import setup
 
@@ -43,7 +40,7 @@ with open(ROOT / 'jishaku' / 'meta.py', 'r', encoding='utf-8') as f:
 
     version = '.'.join([VERSION_MATCH.group(1), VERSION_MATCH.group(2), VERSION_MATCH.group(3)])
 
-EXTRA_REQUIRES: typing.Dict[str, typing.List[str]] = {}
+EXTRA_REQUIRES: dict[str, list[str]] = {}
 
 for feature in (ROOT / 'requirements').glob('*.txt'):
     with open(feature, 'r', encoding='utf-8') as f:

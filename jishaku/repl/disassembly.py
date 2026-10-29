@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.disassembly
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,12 +88,12 @@ def format_instruction(
     opname_width: int = 20
     oparg_width: int = 5
 
-    fields: typing.List[str] = []
+    fields: list[str] = []
 
     # Column: Source code line number
     if lineno_width:
         if instruction.starts_line:
-            lineno_fmt = "%%%dd" % lineno_width
+            lineno_fmt = f"%{lineno_width}d"
             fields.append(lineno_fmt % instruction.starts_line)
         else:
             fields.append(' ' * lineno_width)
@@ -131,8 +129,8 @@ def format_instruction(
 
 def disassemble(
     code: str,
-    scope: typing.Optional[Scope] = None,
-    arg_dict: typing.Optional[typing.Dict[str, typing.Any]] = None
+    scope: Scope | None = None,
+    arg_dict: dict[str, typing.Any] | None = None
 ) -> typing.Generator[str, None, None]:
     """
     Disassembles asynchronous code into dis.dis-style bytecode instructions.
@@ -144,7 +142,7 @@ def disassemble(
     scope = scope or Scope()
 
     wrapped = wrap_code(code, args=', '.join(arg_names))
-    exec(compile(wrapped, '<repl>', 'exec'), scope.globals, scope.locals)  # pylint: disable=exec-used
+    exec(compile(wrapped, '<repl>', 'exec'), scope.globals, scope.locals)  # ruff: ignore[S102]
 
     func_def = scope.locals.get('_repl_coroutine') or scope.globals['_repl_coroutine']
 
@@ -174,7 +172,7 @@ def maybe_ansi(text: str, level: int, use_ansi: bool = True) -> str:
 
 
 def format_ast_block(
-    node: typing.Union[typing.List[ast.AST], ast.AST],
+    node: list[ast.AST] | ast.AST,
     header: str = '',
     level: int = 0,
     through: bool = False,
@@ -190,7 +188,7 @@ def format_ast_block(
     elif not isinstance(node, list):  # type: ignore
         branch, _ = TREE_CONTINUE if through else TREE_LAST
         branch = maybe_ansi(f"{branch} {header}: ", level, use_ansi)
-        yield f"{branch}{repr(node)}"
+        yield f"{branch}{node!r}"
         return
     elif not node:
         branch, _ = TREE_CONTINUE if through else TREE_LAST
@@ -214,7 +212,7 @@ def format_ast_block(
                 yield f"{stalk + (' ' * len(header.format(index)))} {description}"
 
 
-def format_ast_node(node: typing.Optional[ast.AST], level: int = 0, use_ansi: bool = True) -> typing.Generator[str, None, None]:
+def format_ast_node(node: ast.AST | None, level: int = 0, use_ansi: bool = True) -> typing.Generator[str, None, None]:
     """
     Recursively formats an AST node structure
 
@@ -241,7 +239,7 @@ def format_ast_node(node: typing.Optional[ast.AST], level: int = 0, use_ansi: bo
 
     else:
         if use_ansi:
-            yield f"\u001b[1;4m{repr(node)}\u001b[0m"
+            yield f"\u001b[1;4m{node!r}\u001b[0m"
         else:
             yield repr(node)
 
@@ -269,11 +267,11 @@ def recurse_code(code: types.CodeType) -> typing.Generator[types.CodeType, None,
 
 if sys.version_info >= (3, 11):
     try:
-        SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset(opcode._specialized_opmap.keys())  # type: ignore  # pylint: disable=protected-access,no-member
+        SPECIALIZED_INSTRUCTIONS: set[str] = frozenset(opcode._specialized_opmap.keys())  # type: ignore  # pylint: disable=protected-access,no-member
     except AttributeError:
-        SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset(opcode._specialized_instructions)  # type: ignore  # pylint: disable=protected-access,no-member
+        SPECIALIZED_INSTRUCTIONS: set[str] = frozenset(opcode._specialized_instructions)  # type: ignore  # pylint: disable=protected-access,no-member
 else:
-    SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset()
+    SPECIALIZED_INSTRUCTIONS: set[str] = frozenset()
 
 SUPERINSTRUCTIONS = frozenset(
     {
@@ -305,10 +303,10 @@ SUPERINSTRUCTIONS = frozenset(
 
 
 def get_adaptive_spans(code: types.CodeType) -> typing.Generator[
-    typing.Tuple[
+    tuple[
         dis.Instruction,
         int,
-        typing.Optional[typing.Tuple[int, int]],
+        tuple[int, int] | None,
         bool, bool
     ],
     None, None

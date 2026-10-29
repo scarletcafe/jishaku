@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.guild
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,7 +26,7 @@ class GuildFeature(Feature):
 
     @staticmethod
     def apply_overwrites(
-        permissions: typing.Dict[str, typing.Tuple[bool, str]],
+        permissions: dict[str, tuple[bool, str]],
         allow: int,
         deny: int,
         name: str
@@ -56,7 +54,7 @@ class GuildFeature(Feature):
                 permissions[key] = (True, f"it is the channel's {name} overwrite")
 
     @staticmethod
-    def chunks(array: typing.List[T], chunk_size: int) -> typing.Generator[typing.List[T], None, None]:
+    def chunks(array: list[T], chunk_size: int) -> typing.Generator[list[T], None, None]:
         """
         Chunks a list into chunks of a given size.
         Should probably be in utils, honestly.
@@ -68,8 +66,8 @@ class GuildFeature(Feature):
     async def jsk_permtrace(
         self,
         ctx: ContextA,
-        channel: typing.Union[discord.TextChannel, discord.VoiceChannel],
-        *targets: typing.Union[discord.Member, discord.Role]
+        channel: discord.TextChannel | discord.VoiceChannel,
+        *targets: discord.Member | discord.Role
     ):
         """
         Calculates the source of granted or rejected permissions.
@@ -79,7 +77,7 @@ class GuildFeature(Feature):
         """
 
         member_ids = {target.id: target for target in targets if isinstance(target, discord.Member)}
-        roles: typing.List[discord.Role] = []
+        roles: list[discord.Role] = []
 
         for target in targets:
             if isinstance(target, discord.Member):
@@ -92,11 +90,11 @@ class GuildFeature(Feature):
 
         # Dictionary to store the current permission state and reason
         # Stores <perm name>: (<perm allowed>, <reason>)
-        permissions: typing.Dict[str, typing.Tuple[bool, str]] = {}
+        permissions: dict[str, tuple[bool, str]] = {}
 
         if member_ids and channel.guild.owner_id in member_ids:
             # Is owner, has all perms
-            for key in dict(discord.Permissions.all()).keys():
+            for key in dict(discord.Permissions.all()):
                 permissions[key] = (True, f"<@{channel.guild.owner_id}> owns the server")
         else:
             # Otherwise, either not a member or not the guild owner, calculate perms manually
@@ -117,7 +115,7 @@ class GuildFeature(Feature):
                 if role.permissions.administrator:
                     is_administrator = True
 
-                    for key in dict(discord.Permissions.all()).keys():
+                    for key in dict(discord.Permissions.all()):
                         if not permissions[key][0]:
                             permissions[key] = (True, f"it is granted by Administrator on the server-wide {role.name} permission")
 
@@ -175,8 +173,8 @@ class GuildFeature(Feature):
 
         embed = discord.Embed(color=0x00FF00, description=description)
 
-        allows: typing.List[str] = []
-        denies: typing.List[str] = []
+        allows: list[str] = []
+        denies: list[str] = []
 
         for key, value in permissions.items():
             if value[0]:

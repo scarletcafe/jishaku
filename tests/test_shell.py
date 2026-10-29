@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.shell test
 ~~~~~~~~~~~~~~~~~~
@@ -28,10 +26,12 @@ async def test_reader_basic():
     assert len(return_data) == 1
     assert return_data[0] == "hi"
 
-    with pytest.raises(asyncio.TimeoutError):
-        with ShellReader("sleep 2", timeout=1) as reader:
-            async for result in reader:
-                pass
+    with (
+        pytest.raises(asyncio.TimeoutError),
+        ShellReader("sleep 2", timeout=1) as reader
+    ):
+        async for result in reader:
+            pass
 
     await asyncio.sleep(0.5)  # Ensure ShellReader.executor_wrapper completes
 

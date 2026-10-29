@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.flags
 ~~~~~~~~~~~~~~
@@ -25,7 +23,7 @@ ENABLED_SYMBOLS = ("true", "t", "yes", "y", "on", "1")
 DISABLED_SYMBOLS = ("false", "f", "no", "n", "off", "0")
 
 
-FlagHandler = typing.Optional[typing.Callable[['FlagMeta'], typing.Any]]
+FlagHandler = typing.Callable[['FlagMeta'], typing.Any] | None
 
 
 @dataclasses.dataclass
@@ -93,8 +91,8 @@ class FlagMeta(type):
     def __new__(
         cls,
         name: str,
-        base: typing.Tuple[typing.Type[typing.Any]],
-        attrs: typing.Dict[str, typing.Any]
+        base: tuple[type[typing.Any]],
+        attrs: dict[str, typing.Any]
     ):
         attrs['flag_map'] = {}
 
@@ -125,13 +123,7 @@ class FlagMeta(type):
             annotations = {}
 
         for flag_name, flag_type in annotations.items():
-            default: typing.Union[
-                FlagHandler,
-                typing.Tuple[
-                    FlagHandler,  # default
-                    FlagHandler,  # handler
-                ],
-            ] = attrs.pop(flag_name, None)
+            default: FlagHandler | tuple[FlagHandler, FlagHandler] = attrs.pop(flag_name, None)
             handler: FlagHandler = None
 
             if isinstance(default, tuple):
@@ -139,10 +131,10 @@ class FlagMeta(type):
 
             attrs['flag_map'][flag_name] = Flag(flag_name, flag_type, default, handler)
 
-        return super(FlagMeta, cls).__new__(cls, name, base, attrs)
+        return super().__new__(cls, name, base, attrs)
 
     def __getattr__(cls, name: str):
-        cls.flag_map: typing.Dict[str, Flag]
+        cls.flag_map: dict[str, Flag]  # ruff: ignore[B032]: I know this is weird but without it pyright gets so confused
 
         if hasattr(cls, 'flag_map') and name in cls.flag_map:
             return cls.flag_map[name].resolve(cls)
@@ -195,7 +187,7 @@ class Flags(metaclass=FlagMeta):  # pylint: disable=too-few-public-methods
     ALWAYS_DM_TRACEBACK: bool
 
     @classmethod
-    def traceback_destination(cls, message: discord.Message) -> typing.Optional[discord.abc.Messageable]:
+    def traceback_destination(cls, message: discord.Message) -> discord.abc.Messageable | None:
         """
         Determine what 'default' location to send tracebacks to
         When None, the caller should decide

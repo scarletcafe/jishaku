@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku manual multiclass test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,7 +18,6 @@ import asyncio
 import logging
 import logging.handlers
 import sys
-import typing
 
 import click
 import discord
@@ -34,7 +31,7 @@ LOADABLES = (
 
 
 async def async_entrypoint(token: str):
-    bots: typing.List[commands.Bot] = []
+    bots: list[commands.Bot] = []
 
     for prefix, extension in LOADABLES:
         bot = commands.Bot(prefix, intents=discord.Intents.all())

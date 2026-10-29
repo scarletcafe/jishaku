@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.functools
 ~~~~~~~~~~~~~~~~~
@@ -103,17 +101,17 @@ class AsyncSender(typing.Generic[T, U]):
 
     __slots__ = ('iterator', 'send_value')
 
-    def __init__(self, iterator: typing.AsyncGenerator[T, typing.Optional[U]]):
+    def __init__(self, iterator: typing.AsyncGenerator[T, U | None]):
         self.iterator = iterator
         self.send_value: U = None
 
-    def __aiter__(self) -> typing.AsyncGenerator[typing.Tuple[typing.Callable[[typing.Optional[U]], None], T], None]:
+    def __aiter__(self) -> typing.AsyncIterator[tuple[typing.Callable[[U | None], None], T]]:
         return self._internal(self.iterator.__aiter__())  # type: ignore
 
     async def _internal(
         self,
-        base: typing.AsyncGenerator[T, typing.Optional[U]]
-    ) -> typing.AsyncGenerator[typing.Tuple[typing.Callable[[typing.Optional[U]], None], T], None]:
+        base: typing.AsyncGenerator[T, U | None]
+    ) -> typing.AsyncGenerator[tuple[typing.Callable[[U | None], None], T], None]:
         try:
             while True:
                 # Send the last value to the iterator
@@ -125,7 +123,7 @@ class AsyncSender(typing.Generic[T, U]):
         except StopAsyncIteration:
             pass
 
-    def set_send_value(self, value: typing.Optional[U]):
+    def set_send_value(self, value: U | None):
         """
         Sets the next value to be sent to the iterator.
 

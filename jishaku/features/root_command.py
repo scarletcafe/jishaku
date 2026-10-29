@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.root_command
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -55,7 +53,7 @@ class RootCommand(Feature):
         """
 
         # Try to locate what vends the `discord` package
-        distributions: typing.List[str] = [
+        distributions: list[str] = [
             dist for dist in packages_distributions()['discord']  # type: ignore
             if any(
                 file.parts == ('discord', '__init__.py')  # type: ignore
@@ -71,8 +69,10 @@ class RootCommand(Feature):
         summary = [
             f"Jishaku v{package_version('jishaku')}, {dist_version}, "
             f"`Python {sys.version}` on `{sys.platform}`".replace("\n", ""),
-            f"Module was loaded <t:{self.load_time.timestamp():.0f}:R>, "
-            f"cog was loaded <t:{self.start_time.timestamp():.0f}:R>.",
+            (
+                f"Module was loaded <t:{self.load_time.timestamp():.0f}:R>, "
+                f"cog was loaded <t:{self.start_time.timestamp():.0f}:R>."
+            ),
             ""
         ]
 
@@ -118,7 +118,7 @@ class RootCommand(Feature):
                     f" and can see {cache_summary}."
                 )
             else:
-                shard_ids = ', '.join(str(i) for i in self.bot.shards.keys())
+                shard_ids = ', '.join(str(i) for i in self.bot.shards)
                 summary.append(
                     f"This bot is automatically sharded (Shards {shard_ids} of {self.bot.shard_count})"
                     f" and can see {cache_summary}."
@@ -207,7 +207,7 @@ class RootCommand(Feature):
         return await interface.send_to(ctx)
 
     @Feature.Command(parent="jsk", name="cancel")
-    async def jsk_cancel(self, ctx: ContextA, *, index: typing.Union[int, str]):
+    async def jsk_cancel(self, ctx: ContextA, *, index: int | str):
         """
         Cancels a task with the given index.
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.cog
 ~~~~~~~~~~~~
@@ -12,7 +10,6 @@ The Jishaku debugging and diagnostics cog implementation.
 """
 
 import inspect
-import typing
 
 from discord.ext import commands
 
@@ -28,15 +25,15 @@ from jishaku.features.sql import SQLFeature
 from jishaku.features.voice import VoiceFeature
 
 __all__ = (
-    "Jishaku",
-    "STANDARD_FEATURES",
     "OPTIONAL_FEATURES",
+    "STANDARD_FEATURES",
+    "Jishaku",
     "setup",
 )
 
 STANDARD_FEATURES = (VoiceFeature, GuildFeature, FilesystemFeature, InvocationFeature, ShellFeature, SQLFeature, PythonFeature, ManagementFeature, RootCommand)
 
-OPTIONAL_FEATURES: typing.List[typing.Type[Feature]] = []
+OPTIONAL_FEATURES: list[type[Feature]] = []
 
 try:
     from jishaku.features.youtube import YouTubeFeature

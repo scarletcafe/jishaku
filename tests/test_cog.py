@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.cog loadability and functionality test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,16 +89,15 @@ async def test_cog_attributes(bot):
 async def test_cog_check(bot):
     cog = bot.get_cog("Jishaku")
 
-    with utils.mock_ctx() as ctx:
-        with utils.mock_coro(ctx.bot, 'is_owner'):
-            ctx.bot.is_owner.coro.return_value = True
+    with utils.mock_ctx() as ctx, utils.mock_coro(ctx.bot, 'is_owner'):
+        ctx.bot.is_owner.coro.return_value = True
 
-            assert await cog.cog_check(ctx)
+        assert await cog.cog_check(ctx)
 
-            ctx.bot.is_owner.coro.return_value = False
+        ctx.bot.is_owner.coro.return_value = False
 
-            with pytest.raises(commands.NotOwner):
-                await cog.cog_check(ctx)
+        with pytest.raises(commands.NotOwner):
+            await cog.cog_check(ctx)
 
 
 @pytest.mark.asyncio
@@ -162,45 +159,49 @@ async def test_commands(bot):
         text = ctx.send.call_args[0][0]
         assert "No currently running tasks" in text
 
-    with utils.mock_ctx() as ctx:
-        with cog.submit(ctx):
-            interface = await bot.get_command('jsk tasks').callback(cog, ctx)
+    with utils.mock_ctx() as ctx, cog.submit(ctx):
+        interface = await bot.get_command('jsk tasks').callback(cog, ctx)
 
-            ctx.send.assert_called_once()
+        ctx.send.assert_called_once()
 
-            interface.task.cancel()
+        interface.task.cancel()
 
     # test 'jsk cancel'
-    with utils.mock_ctx() as ctx:
-        # test explicit
-        with cog.submit(ctx) as command_task:
-            with pytest.raises(asyncio.CancelledError):
-                await bot.get_command('jsk cancel').callback(cog, ctx, index=command_task.index)
-                await asyncio.sleep(0.1)
+    # test explicit
+    with (
+        utils.mock_ctx() as ctx,
+        cog.submit(ctx) as command_task
+    ):
+        with pytest.raises(asyncio.CancelledError):
+            await bot.get_command('jsk cancel').callback(cog, ctx, index=command_task.index)
+            await asyncio.sleep(0.1)
 
-            ctx.send.assert_called_once()
-            text = ctx.send.call_args[0][0]
-            assert f"Cancelled task {command_task.index}" in text
+        ctx.send.assert_called_once()
+        text = ctx.send.call_args[0][0]
+        assert f"Cancelled task {command_task.index}" in text
 
-    with utils.mock_ctx() as ctx:
-        # test implicit
-        with cog.submit(ctx) as command_task:
-            with pytest.raises(asyncio.CancelledError):
-                await bot.get_command('jsk cancel').callback(cog, ctx, index=-1)
-                await asyncio.sleep(0.1)
+    # test implicit
+    with (utils.mock_ctx() as ctx,
+        cog.submit(ctx) as command_task
+    ):
+        with pytest.raises(asyncio.CancelledError):
+            await bot.get_command('jsk cancel').callback(cog, ctx, index=-1)
+            await asyncio.sleep(0.1)
 
-            ctx.send.assert_called_once()
-            text = ctx.send.call_args[0][0]
-            assert f"Cancelled task {command_task.index}" in text
+        ctx.send.assert_called_once()
+        text = ctx.send.call_args[0][0]
+        assert f"Cancelled task {command_task.index}" in text
 
-    with utils.mock_ctx() as ctx:
-        # test unknown task
-        with cog.submit(ctx) as command_task:
-            await bot.get_command('jsk cancel').callback(cog, ctx, index=123456789012345678)
+    # test unknown task
+    with (
+        utils.mock_ctx() as ctx,
+        cog.submit(ctx) as command_task
+    ):
+        await bot.get_command('jsk cancel').callback(cog, ctx, index=123456789012345678)
 
-            ctx.send.assert_called_once()
-            text = ctx.send.call_args[0][0]
-            assert "Unknown task" in text
+        ctx.send.assert_called_once()
+        text = ctx.send.call_args[0][0]
+        assert "Unknown task" in text
 
     with utils.mock_ctx() as ctx:
         # test no tasks

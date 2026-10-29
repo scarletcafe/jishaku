@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.shell
 ~~~~~~~~~~~~~
@@ -59,7 +57,7 @@ class ShellReader:
         self,
         code: str,
         timeout: int = 120,
-        loop: typing.Optional[asyncio.AbstractEventLoop] = None,
+        loop: asyncio.AbstractEventLoop | None = None,
         escape_ansi: bool = True
     ):
         if WINDOWS:
@@ -106,7 +104,7 @@ class ShellReader:
         self.stdout_task = self.make_reader_task(self.stdout, self.stdout_handler) if self.process.stdout else None
         self.stderr_task = self.make_reader_task(self.process.stderr, self.stderr_handler) if self.process.stderr else None
 
-        self.queue: 'asyncio.Queue[str]' = asyncio.Queue(maxsize=250)
+        self.queue: asyncio.Queue[str] = asyncio.Queue(maxsize=250)
 
     @property
     def closed(self) -> bool:
@@ -175,9 +173,9 @@ class ShellReader:
         while not self.closed or not self.queue.empty():
             try:
                 item = await asyncio.wait_for(self.queue.get(), timeout=1)
-            except asyncio.TimeoutError as exception:
+            except asyncio.TimeoutError:
                 if time.perf_counter() - last_output >= self.timeout:
-                    raise exception
+                    raise
             else:
                 last_output = time.perf_counter()
                 return item

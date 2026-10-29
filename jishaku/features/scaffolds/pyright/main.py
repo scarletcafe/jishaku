@@ -1,4 +1,4 @@
-from typing import *  # type: ignore  # noqa: F403
+# ruff: noqa
+from typing import *  # type: ignore
 
-# ruff: noqa: F405
 {content}

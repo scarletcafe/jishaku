@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.baseclass
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,15 +14,16 @@ import collections
 import contextlib
 import typing
 from datetime import datetime, timezone
+from typing import Concatenate
 
 from discord.ext import commands
-from typing_extensions import Concatenate, ParamSpec
+from typing_extensions import ParamSpec
 
 from jishaku.types import BotT, ContextA
 
 __all__ = (
-    'Feature',
-    'CommandTask'
+    'CommandTask',
+    'Feature'
 )
 
 
@@ -78,20 +77,15 @@ class Feature(commands.Cog):
 
         def __init__(
             self,
-            parent: typing.Optional[str] = None,
+            parent: str | None = None,
             standalone_ok: bool = False,
             **kwargs: typing.Any
         ):
-            self.parent: typing.Optional[str] = parent
-            self.parent_instance: typing.Optional[Feature.Command[GenericFeature, typing.Any, typing.Any]] = None
+            self.parent: str | None = parent
+            self.parent_instance: Feature.Command[GenericFeature, typing.Any, typing.Any] | None = None
             self.standalone_ok = standalone_ok
             self.kwargs = kwargs
-            self.callback: typing.Optional[
-                typing.Callable[
-                    Concatenate[GenericFeature, ContextA, P],
-                    typing.Coroutine[typing.Any, typing.Any, T]
-                ]
-            ] = None
+            self.callback: typing.Callable[Concatenate[GenericFeature, ContextA, P], typing.Coroutine[typing.Any, typing.Any, T]] | None = None
             self.depth: int = 0
             self.has_children: bool = False
 
@@ -109,7 +103,7 @@ class Feature(commands.Cog):
 
         def convert(
             self,
-            association_map: typing.Dict[
+            association_map: dict[
                 'Feature.Command[GenericFeature, typing.Any, typing.Any]',
                 'commands.Command[GenericFeature, typing.Any, typing.Any]',
             ]
@@ -141,11 +135,11 @@ class Feature(commands.Cog):
     def __init__(self, *args: typing.Any, **kwargs: typing.Any):
         self.bot: BotT = kwargs.pop('bot')
         self.start_time: datetime = datetime.now(timezone.utc)
-        self.tasks: typing.Deque[CommandTask] = collections.deque()
+        self.tasks: collections.deque[CommandTask] = collections.deque()
         self.task_count: int = 0
 
         # Generate and attach commands
-        command_lookup: typing.Dict[str, Feature.Command['Feature', typing.Any, typing.Any]] = {}
+        command_lookup: dict[str, Feature.Command[Feature, typing.Any, typing.Any]] = {}
 
         for kls in reversed(type(self).__mro__):
             for key, cmd in kls.__dict__.items():
@@ -184,14 +178,14 @@ class Feature(commands.Cog):
 
         # Sort by depth
         command_set.sort(key=lambda c: c[1].depth)
-        association_map: typing.Dict[
-            Feature.Command['Feature', typing.Any, typing.Any],
-            commands.Command['Feature', typing.Any, typing.Any]
+        association_map: dict[
+            Feature.Command[Feature, typing.Any, typing.Any],
+            commands.Command[Feature, typing.Any, typing.Any]
         ] = {}
 
-        self.feature_commands: typing.Dict[
+        self.feature_commands: dict[
             str,
-            commands.Command['Feature', typing.Any, typing.Any]
+            commands.Command[Feature, typing.Any, typing.Any]
         ] = {}
 
         for key, cmd in command_set:

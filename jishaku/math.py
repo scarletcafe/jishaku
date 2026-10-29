@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.math
 ~~~~~~~~~~~~
@@ -53,7 +51,7 @@ def natural_time(time_in_seconds: float) -> str:
     return f"{time_in_seconds / 1e-9:6.2f} ns"
 
 
-def mean_stddev(collection: typing.Collection[float]) -> typing.Tuple[float, float]:
+def mean_stddev(collection: typing.Collection[float]) -> tuple[float, float]:
     """
     Takes a collection of floats and returns (mean, stddev) as a tuple.
     """

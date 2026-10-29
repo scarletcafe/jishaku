@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.paginators
 ~~~~~~~~~~~~~~~~~~
@@ -27,8 +25,14 @@ from jishaku.types import BotT, ContextA
 if typing.TYPE_CHECKING:
     from discord.types.components import ButtonComponent
 
-__all__ = ('EmojiSettings', 'PaginatorInterface', 'PaginatorEmbedInterface',
-           'WrappedPaginator', 'FilePaginator', 'use_file_check')
+__all__ = (
+    'EmojiSettings',
+    'FilePaginator',
+    'PaginatorEmbedInterface',
+    'PaginatorInterface',
+    'WrappedPaginator',
+    'use_file_check',
+)
 
 
 class WrappedPaginator(commands.Paginator):
@@ -54,7 +58,7 @@ class WrappedPaginator(commands.Paginator):
     def __init__(
         self,
         *args: typing.Any,
-        wrap_on: typing.Tuple[str, ...] = ('\n', ' '),
+        wrap_on: tuple[str, ...] = ('\n', ' '),
         include_wrapped: bool = True,
         force_wrap: bool = False,
         **kwargs: typing.Any
@@ -128,8 +132,8 @@ class FilePaginator(commands.Paginator):
     def __init__(
         self,
         fp: typing.BinaryIO,
-        line_span: typing.Optional[typing.Tuple[int, int]] = None,
-        language_hints: typing.Tuple[str, ...] = (),
+        line_span: tuple[int, int] | None = None,
+        language_hints: tuple[str, ...] = (),
         **kwargs: typing.Any
     ):
         language = ''
@@ -193,7 +197,7 @@ def use_file_check(
     ])
 
 
-_Emoji = typing.Union[str, discord.PartialEmoji, discord.Emoji]
+_Emoji = str | discord.PartialEmoji | discord.Emoji
 
 
 class EmojiSettings(typing.NamedTuple):
@@ -245,7 +249,7 @@ class DynamicButton(ui.Button[V_co]):
         # Absorbed to be compatible with ui.Button
         pass
 
-    def to_component_dict(self) -> 'ButtonComponent':
+    def to_component_dict(self) -> ButtonComponent:
         self._underlying.label = str(self.label_callback(self))
         return self._underlying.to_dict()
 
@@ -291,7 +295,7 @@ class PaginatorInterface(ui.View):  # pylint: disable=too-many-instance-attribut
         self,
         bot: BotT,
         paginator: commands.Paginator,
-        additional_buttons: typing.Optional[typing.List[ui.Button[typing.Self]]] = None,
+        additional_buttons: list[ui.Button[typing.Self]] | None = None,
         **kwargs: typing.Any
     ):
         if not isinstance(paginator, commands.Paginator):  # type: ignore
@@ -311,10 +315,10 @@ class PaginatorInterface(ui.View):  # pylint: disable=too-many-instance-attribut
 
         self.sent_page_reactions = False
 
-        self.task: typing.Optional[asyncio.Task[None]] = None
+        self.task: asyncio.Task[None] | None = None
         self.send_lock: asyncio.Event = asyncio.Event()
 
-        self.close_exception: typing.Optional[BaseException] = None
+        self.close_exception: BaseException | None = None
 
         if self.page_size > self.max_page_size:
             raise ValueError(
@@ -348,12 +352,12 @@ class PaginatorInterface(ui.View):  # pylint: disable=too-many-instance-attribut
 
         self.additional_buttons = additional_buttons or []
 
-        self.buttons: typing.List[ui.Button[typing.Self]] = self.button_definitions()
+        self.buttons: list[ui.Button[typing.Self]] = self.button_definitions()
 
         for button in self.buttons:
             self.add_item(button)
 
-    def button_definitions(self) -> typing.List[ui.Button[typing.Self]]:
+    def button_definitions(self) -> list[ui.Button[typing.Self]]:
         """
         This is an overridable function you can use to remove buttons or customize their order.
 
@@ -428,7 +432,7 @@ class PaginatorInterface(ui.View):  # pylint: disable=too-many-instance-attribut
         return self.paginator.max_size + len(f'\nPage {page_count}/{page_count}')
 
     @property
-    def send_kwargs(self) -> typing.Dict[str, typing.Any]:
+    def send_kwargs(self) -> dict[str, typing.Any]:
         """
         A property that returns the kwargs forwarded to send/edit when updating the page.
 
@@ -597,7 +601,7 @@ class PaginatorInterface(ui.View):  # pylint: disable=too-many-instance-attribut
 
         page_number: ui.TextInput[ui.Modal] = ui.TextInput(label="Page number", style=discord.TextStyle.short)
 
-        def __init__(self, interface: 'PaginatorInterface', *args: typing.Any, **kwargs: typing.Any):
+        def __init__(self, interface: PaginatorInterface, *args: typing.Any, **kwargs: typing.Any):
             super().__init__(*args, timeout=interface.timeout_length, **kwargs)
             self.interface = interface
             self.page_number.label = f"Page number (1-{interface.page_count})"
@@ -653,7 +657,7 @@ class PaginatorEmbedInterface(PaginatorInterface):
         super().__init__(*args, **kwargs)
 
     @property
-    def send_kwargs(self) -> typing.Dict[str, typing.Any]:
+    def send_kwargs(self) -> dict[str, typing.Any]:
         self._embed.description = self.pages[self.display_page]
         return {'embed': self._embed, 'view': self}
 

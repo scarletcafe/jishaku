@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 MIT License
 
@@ -48,7 +46,7 @@ class File(typing.NamedTuple):
 
 
 ENVIRONMENT = Environment(loader=BaseLoader())
-FILES: typing.List[File] = []
+FILES: list[File] = []
 
 for file in pathlib.Path('dist').iterdir():
     if file.is_file() and file.name.lower().endswith(('.whl', '.egg', '.tar.gz')):

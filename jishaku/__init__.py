@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku
 ~~~~~~~
@@ -11,16 +9,16 @@ A discord.py extension including useful tools for bot development and debugging.
 
 """
 
-from jishaku.cog import Jishaku, STANDARD_FEATURES, OPTIONAL_FEATURES, setup
+from jishaku.cog import OPTIONAL_FEATURES, STANDARD_FEATURES, Jishaku, setup
 from jishaku.features.baseclass import Feature
 from jishaku.flags import Flags
-from jishaku.meta import *  # noqa: F403
+from jishaku.meta import *
 
 __all__ = (
-    'Jishaku',
+    'OPTIONAL_FEATURES',
+    'STANDARD_FEATURES',
     'Feature',
     'Flags',
-    'STANDARD_FEATURES',
-    'OPTIONAL_FEATURES',
+    'Jishaku',
     'setup',
 )

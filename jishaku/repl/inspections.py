@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.inspections
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,8 +17,8 @@ import typing
 
 from typing_extensions import ParamSpec
 
-INSPECTIONS: typing.List[
-    typing.Tuple[
+INSPECTIONS: list[
+    tuple[
         str,
         typing.Callable[..., typing.Any]
     ]
@@ -79,7 +77,7 @@ def class_name(obj: typing.Any):
     """
 
     name = obj.__name__
-    module = getattr(obj, '__module__')
+    module = obj.__module__
 
     if module:
         name = f'{module}.{name}'
@@ -214,12 +212,10 @@ def check_not_slot(obj: typing.Any, attr: str):
 @add_inspection("Operations")
 def compat_operation_inspection(obj: typing.Any):
     this_dict = dir(obj)
-    operations: typing.List[str] = []
+    operations: list[str] = []
 
     for operation, member in POSSIBLE_OPS.items():
-        if f'__{member}__' in this_dict and check_not_slot(obj, f'__{member}__'):
-            operations.append(operation)
-        elif f'__r{member}__' in this_dict and check_not_slot(obj, f'r__{member}__'):
+        if f'__{member}__' in this_dict and check_not_slot(obj, f'__{member}__') or f'__r{member}__' in this_dict and check_not_slot(obj, f'r__{member}__'):
             operations.append(operation)
 
         if f'__i{member}__' in this_dict and check_not_slot(obj, f'i__{member}__'):

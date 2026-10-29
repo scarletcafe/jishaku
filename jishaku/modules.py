@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.modules
 ~~~~~~~~~~~~~~
@@ -20,7 +18,7 @@ from discord.ext import commands
 
 from jishaku.types import BotT, ContextA
 
-__all__ = ('find_extensions_in', 'resolve_extensions', 'package_version', 'ExtensionConverter')
+__all__ = ('ExtensionConverter', 'find_extensions_in', 'package_version', 'resolve_extensions')
 
 
 if typing.TYPE_CHECKING:
@@ -28,10 +26,10 @@ if typing.TYPE_CHECKING:
 else:
     from braceexpand import UnbalancedBracesError
 
-_ExtensionConverterBase = commands.Converter[typing.List[str]]
+_ExtensionConverterBase = commands.Converter[list[str]]
 
 
-def find_extensions_in(path: typing.Union[str, pathlib.Path]) -> typing.List[str]:
+def find_extensions_in(path: str | pathlib.Path) -> list[str]:
     """
     Tries to find things that look like bot extensions in a directory.
     """
@@ -42,7 +40,7 @@ def find_extensions_in(path: typing.Union[str, pathlib.Path]) -> typing.List[str
     if not path.is_dir():
         return []
 
-    extension_names: typing.List[str] = []
+    extension_names: list[str] = []
 
     # Find extensions directly in this folder
     for subpath in path.glob('*.py'):
@@ -63,12 +61,12 @@ def find_extensions_in(path: typing.Union[str, pathlib.Path]) -> typing.List[str
     return extension_names
 
 
-def resolve_extensions(bot: BotT, name: str) -> typing.List[str]:
+def resolve_extensions(bot: BotT, name: str) -> list[str]:
     """
     Tries to resolve extension queries into a list of extension names.
     """
 
-    exts: typing.List[str] = []
+    exts: list[str] = []
     for ext in braceexpand(name):
         if ext.endswith('.*'):
             module_parts = ext[:-2].split('.')
@@ -82,7 +80,7 @@ def resolve_extensions(bot: BotT, name: str) -> typing.List[str]:
     return exts
 
 
-def package_version(package_name: str) -> typing.Optional[str]:
+def package_version(package_name: str) -> str | None:
     """
     Returns package version as a string, or None if it couldn't be found.
     """
@@ -103,7 +101,7 @@ class ExtensionConverter(_ExtensionConverterBase):  # pylint: disable=too-few-pu
         self,
         ctx: ContextA,
         argument: str
-    ) -> typing.List[str]:
+    ) -> list[str]:
         """
         Converts a name, glob, or brace expand of extensions into the list of extension names.
         """

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.__main__
 ~~~~~~~~~~~~~~~~~
@@ -93,7 +91,7 @@ def entrypoint(
     intents: typing.Iterable[str],
     token: str,
     log_level: str,
-    log_file: typing.Optional[str] = None,
+    log_file: str | None = None,
     load_extension: typing.Iterable[str] = (),
     skip_wait: bool = False
 ):
@@ -156,7 +154,7 @@ def entrypoint(
                 f"Intent argument {intent} is invalid; the intent {name} was not found."
             )
 
-    def prefix(bot: commands.Bot, _: discord.Message) -> typing.List[str]:
+    def prefix(bot: commands.Bot, _: discord.Message) -> list[str]:
         return [
             f'{bot.unique_id}::',  # type: ignore
             f'<@{bot.user.id}> {bot.unique_id}::',  # type: ignore

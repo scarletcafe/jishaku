@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.exception_handling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,9 +23,9 @@ from jishaku.flags import Flags
 
 
 async def send_traceback(
-    destination: typing.Union[discord.abc.Messageable, discord.Message],
+    destination: discord.abc.Messageable | discord.Message,
     verbosity: int,
-    etype: typing.Type[BaseException],
+    etype: type[BaseException],
     value: BaseException,
     trace: TracebackType
 ):
@@ -81,8 +79,8 @@ async def do_after_sleep(delay: float, coro: typing.Callable[P, typing.Awaitable
 
 async def attempt_add_reaction(
     msg: discord.Message,
-    reaction: typing.Union[str, discord.Emoji]
-) -> typing.Optional[discord.Reaction]:
+    reaction: str | discord.Emoji
+) -> discord.Reaction | None:
     """
     Try to add a reaction to a message, ignoring it if it fails for any reason.
 
@@ -101,9 +99,9 @@ class ReplResponseReactor:  # pylint: disable=too-few-public-methods
     Extension of the ReactionProcedureTimer that absorbs errors, sending tracebacks.
     """
 
-    __slots__ = ('message', 'loop', 'handle', 'raised')
+    __slots__ = ('handle', 'loop', 'message', 'raised')
 
-    def __init__(self, message: discord.Message, loop: typing.Optional[asyncio.BaseEventLoop] = None):
+    def __init__(self, message: discord.Message, loop: asyncio.BaseEventLoop | None = None):
         self.message = message
         self.loop = loop or asyncio.get_event_loop()
         self.handle = None
@@ -116,9 +114,9 @@ class ReplResponseReactor:  # pylint: disable=too-few-public-methods
 
     async def __aexit__(
         self,
-        exc_type: typing.Type[BaseException],
-        exc_val: BaseException,
-        exc_tb: TracebackType
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None
     ) -> bool:
         if self.handle:
             self.handle.cancel()

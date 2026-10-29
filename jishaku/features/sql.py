@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.sql
 ~~~~~~~~~~~~~~~~~~~~
@@ -52,13 +50,13 @@ class Adapter(typing.Generic[T]):
         """
         raise NotImplementedError()
 
-    async def fetchrow(self, query: str) -> typing.Dict[str, typing.Any]:
+    async def fetchrow(self, query: str) -> dict[str, typing.Any]:
         """
         A function that executes a fetch-style request and returns a single entry of {column: value}.
         """
         raise NotImplementedError()
 
-    async def fetch(self, query: str) -> typing.List[typing.Dict[str, typing.Any]]:
+    async def fetch(self, query: str) -> list[dict[str, typing.Any]]:
         """
         A function that executes a fetch-style request and returns possibly many entries of {column: value}.
         """
@@ -70,7 +68,7 @@ class Adapter(typing.Generic[T]):
         """
         raise NotImplementedError()
 
-    async def table_summary(self, table_query: typing.Optional[str]) -> typing.Dict[str, typing.Dict[str, str]]:
+    async def table_summary(self, table_query: str | None) -> dict[str, dict[str, str]]:
         """
         A function that queries to find table structures identified by this adapter.
 
@@ -84,15 +82,15 @@ class Adapter(typing.Generic[T]):
         raise NotImplementedError()
 
 
-KNOWN_ADAPTERS: typing.Dict[typing.Type[typing.Any], typing.Type[Adapter[typing.Any]]] = {}
+KNOWN_ADAPTERS: dict[type[typing.Any], type[Adapter[typing.Any]]] = {}
 
 
-def adapter(*types: typing.Type[typing.Any]):
+def adapter(*types: type[typing.Any]):
     """
     Wraps an adapter class, adding it to the list of globally known adapters and then returning it.
     """
 
-    def wrapper(klass: typing.Type[Adapter[typing.Any]]):
+    def wrapper(klass: type[Adapter[typing.Any]]):
         for handled_type in types:
             KNOWN_ADAPTERS[handled_type] = klass
         return klass
@@ -108,8 +106,8 @@ except ImportError:
     pass
 else:
     @adapter(asyncpg.Connection, asyncpg.pool.Pool)
-    class AsyncpgConnectionAdapter(Adapter[typing.Union[asyncpg.Connection, asyncpg.pool.Pool]]):
-        def __init__(self, connection: typing.Union[asyncpg.Connection, asyncpg.pool.Pool]):
+    class AsyncpgConnectionAdapter(Adapter[asyncpg.Connection | asyncpg.pool.Pool]):
+        def __init__(self, connection: asyncpg.Connection | asyncpg.pool.Pool):
             super().__init__(connection)
             self.connection: asyncpg.Connection = None  # type: ignore
 
@@ -130,11 +128,11 @@ else:
                 f"on PID {self.connection.get_server_pid()}",
             ))
 
-        async def fetchrow(self, query: str) -> typing.Dict[str, typing.Any]:
+        async def fetchrow(self, query: str) -> dict[str, typing.Any]:
             value = await self.connection.fetchrow(query)  # type: ignore
             return dict(value) if value else None  # type: ignore
 
-        async def fetch(self, query: str) -> typing.List[typing.Dict[str, typing.Any]]:
+        async def fetch(self, query: str) -> list[dict[str, typing.Any]]:
             return [
                 dict(record)  # type: ignore
                 for record in await self.connection.fetch(query)  # type: ignore
@@ -143,8 +141,8 @@ else:
         async def execute(self, query: str) -> str:
             return await self.connection.execute(query)  # type: ignore
 
-        async def table_summary(self, table_query: typing.Optional[str]) -> typing.Dict[str, typing.Dict[str, str]]:
-            tables: typing.Dict[str, typing.Dict[str, str]] = collections.defaultdict(dict)
+        async def table_summary(self, table_query: str | None) -> dict[str, dict[str, str]]:
+            tables: dict[str, dict[str, str]] = collections.defaultdict(dict)
 
             for record in await self.connection.fetch(  # type: ignore
                 """
@@ -174,8 +172,8 @@ except ImportError:
     pass
 else:
     @adapter(aiomysql.Connection, aiomysql.Pool)
-    class AioMySQLConnectionAdapter(Adapter[typing.Union[aiomysql.Connection, aiomysql.Pool]]):
-        def __init__(self, connection: typing.Union[aiomysql.Connection, aiomysql.Pool]):
+    class AioMySQLConnectionAdapter(Adapter[aiomysql.Connection | aiomysql.Pool]):
+        def __init__(self, connection: aiomysql.Connection | aiomysql.Pool):
             super().__init__(connection)
             self.connection: aiomysql.Connection = None  # type: ignore
 
@@ -195,7 +193,7 @@ else:
                 f"MySQL server (Database: {self.connection.db}, User: {self.connection.user})",  # type: ignore
             ))
 
-        async def fetchrow(self, query: str) -> typing.Dict[str, typing.Any]:
+        async def fetchrow(self, query: str) -> dict[str, typing.Any]:
             cursor = await self.connection.cursor(aiomysql.DictCursor)  # type: ignore
             try:
                 await cursor.execute(query)  # type: ignore
@@ -204,7 +202,7 @@ else:
             finally:
                 await cursor.close()  # type: ignore
 
-        async def fetch(self, query: str) -> typing.List[typing.Dict[str, typing.Any]]:
+        async def fetch(self, query: str) -> list[dict[str, typing.Any]]:
             cursor = await self.connection.cursor(aiomysql.DictCursor)  # type: ignore
             try:
                 await cursor.execute(query)  # type: ignore
@@ -222,8 +220,8 @@ else:
             finally:
                 await cursor.close()  # type: ignore
 
-        async def table_summary(self, table_query: typing.Optional[str]) -> typing.Dict[str, typing.Dict[str, str]]:
-            tables: typing.Dict[str, typing.Dict[str, str]] = collections.defaultdict(dict)
+        async def table_summary(self, table_query: str | None) -> dict[str, dict[str, str]]:
+            tables: dict[str, dict[str, str]] = collections.defaultdict(dict)
 
             cursor = await self.connection.cursor(aiomysql.DictCursor)  # type: ignore
             try:
@@ -260,8 +258,8 @@ except ImportError:
     pass
 else:
     @adapter(asqlite.Connection, asqlite.Pool)
-    class AsqliteConnectionAdapter(Adapter[typing.Union[asqlite.Connection, asqlite.Pool]]):
-        def __init__(self, connection: typing.Union[asqlite.Connection, asqlite.Pool]):
+    class AsqliteConnectionAdapter(Adapter[asqlite.Connection | asqlite.Pool]):
+        def __init__(self, connection: asqlite.Connection | asqlite.Pool):
             super().__init__(connection)
             self.connection: asqlite.Connection = None  # type: ignore
 
@@ -278,11 +276,11 @@ else:
         def info(self) -> str:
             return f"asqlite {asqlite.__version__} {type(self.connector).__name__}"
 
-        async def fetchrow(self, query: str) -> typing.Dict[str, typing.Any]:
+        async def fetchrow(self, query: str) -> dict[str, typing.Any]:
             row = await self.connection.fetchone(query)
             return dict(row) if row else None  # type: ignore
 
-        async def fetch(self, query: str) -> typing.List[typing.Dict[str, typing.Any]]:
+        async def fetch(self, query: str) -> list[dict[str, typing.Any]]:
             return [dict(row) for row in await self.connection.fetchall(query)]
 
         async def execute(self, query: str) -> str:
@@ -290,8 +288,8 @@ else:
             # output status strings like other RDBMS systems.
             return str((await self.connection.execute(query)).get_cursor().rowcount)
 
-        async def table_summary(self, table_query: typing.Optional[str]) -> typing.Dict[str, typing.Dict[str, str]]:
-            tables: typing.Dict[str, typing.Dict[str, str]] = collections.defaultdict(dict)
+        async def table_summary(self, table_query: str | None) -> dict[str, dict[str, str]]:
+            tables: dict[str, dict[str, str]] = collections.defaultdict(dict)
 
             if table_query:
                 for row in await self.connection.fetchall(
@@ -330,7 +328,7 @@ class SQLFeature(Feature):
 
     JSK_TRY_ATTRIBUTES = ('database_pool', 'database', 'db_pool', 'db', 'pool')
 
-    def jsk_find_adapter(self, ctx: ContextA) -> typing.Union[typing.Tuple[Adapter[typing.Any], str], typing.Tuple[None, None]]:
+    def jsk_find_adapter(self, ctx: ContextA) -> tuple[Adapter[typing.Any], str] | tuple[None, None]:
         """
         Attempts to search for a working database adapter, returning (Adapter, location) if one is found.
         """
@@ -374,10 +372,9 @@ class SQLFeature(Feature):
             return await ctx.send("No SQL adapter could be found on this bot.")
 
         output = None
-        async with adapter_shim.use():
-            async with ReplResponseReactor(ctx.message):
-                with self.submit(ctx):
-                    output = await adapter_shim.fetchrow(query)
+        async with adapter_shim.use(), ReplResponseReactor(ctx.message):
+            with self.submit(ctx):
+                output = await adapter_shim.fetchrow(query)
 
         if output is None:
             return
@@ -411,10 +408,9 @@ class SQLFeature(Feature):
             return await ctx.send("No SQL adapter could be found on this bot.")
 
         output = None
-        async with adapter_shim.use():
-            async with ReplResponseReactor(ctx.message):
-                with self.submit(ctx):
-                    output = await adapter_shim.fetch(query)
+        async with adapter_shim.use(), ReplResponseReactor(ctx.message):
+            with self.submit(ctx):
+                output = await adapter_shim.fetch(query)
 
         if output is None:
             return
@@ -422,7 +418,7 @@ class SQLFeature(Feature):
         if not output:
             return await ctx.reply("No results produced.")
 
-        aggregator: typing.Dict[str, typing.List[typing.Any]] = collections.defaultdict(list)
+        aggregator: dict[str, list[typing.Any]] = collections.defaultdict(list)
 
         for record in output:
             for key, value in record.items():
@@ -462,10 +458,9 @@ class SQLFeature(Feature):
             return await ctx.send("No SQL adapter could be found on this bot.")
 
         output = None
-        async with adapter_shim.use():
-            async with ReplResponseReactor(ctx.message):
-                with self.submit(ctx):
-                    output = await adapter_shim.execute(query)
+        async with adapter_shim.use(), ReplResponseReactor(ctx.message):
+            with self.submit(ctx):
+                output = await adapter_shim.execute(query)
 
         if output is None:
             return
@@ -473,7 +468,7 @@ class SQLFeature(Feature):
         await ctx.reply(content=output)
 
     @Feature.Command(parent="jsk_sql", name="schema")
-    async def jsk_sql_schema(self, ctx: ContextA, *, query: typing.Optional[str] = None):
+    async def jsk_sql_schema(self, ctx: ContextA, *, query: str | None = None):
         """
         Queries for the current schema and shows located table structures.
         """
@@ -484,10 +479,9 @@ class SQLFeature(Feature):
             return await ctx.send("No SQL adapter could be found on this bot.")
 
         output = None
-        async with adapter_shim.use():
-            async with ReplResponseReactor(ctx.message):
-                with self.submit(ctx):
-                    output = await adapter_shim.table_summary(query)
+        async with adapter_shim.use(), ReplResponseReactor(ctx.message):
+            with self.submit(ctx):
+                output = await adapter_shim.table_summary(query)
 
         if output is None:
             return

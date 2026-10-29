@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.management
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +40,7 @@ class ManagementFeature(Feature):
         Reports any extensions that failed to load.
         """
 
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
+        extensions: typing.Iterable[list[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
 
@@ -84,7 +82,7 @@ class ManagementFeature(Feature):
         Reports any extensions that failed to unload.
         """
 
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
+        extensions: typing.Iterable[list[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
         icon = "\N{OUTBOX TRAY}"
@@ -154,9 +152,9 @@ class ManagementFeature(Feature):
         message = None
 
         # We'll show each of these readings as well as an average and standard deviation.
-        api_readings: typing.List[float] = []
+        api_readings: list[float] = []
         # We'll also record websocket readings, but we'll only provide the average.
-        websocket_readings: typing.List[float] = []
+        websocket_readings: list[float] = []
 
         # We do 6 iterations here.
         # This gives us 5 visible readings, because a request can't include the stats for itself.
@@ -211,7 +209,7 @@ class ManagementFeature(Feature):
 
         paginator = commands.Paginator(prefix='', suffix='')
 
-        guilds_set: typing.Set[typing.Optional[int]] = set()
+        guilds_set: set[int | None] = set()
         for target in targets:
             if target == '$':
                 guilds_set.add(None)
@@ -232,7 +230,7 @@ class ManagementFeature(Feature):
         if not targets:
             guilds_set.add(None)
 
-        guilds: typing.List[typing.Optional[int]] = list(guilds_set)
+        guilds: list[int | None] = list(guilds_set)
         guilds.sort(key=lambda g: (g is not None, g))
 
         for guild in guilds:
@@ -266,7 +264,7 @@ class ManagementFeature(Feature):
 
             except discord.HTTPException as error:
                 # It's diagnosis time
-                error_lines: typing.List[str] = []
+                error_lines: list[str] = []
                 for line in str(error).split("\n"):
                     error_lines.append(line)
 

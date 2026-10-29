@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.python
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +27,15 @@ from jishaku.formatting import MultilineFormatter
 from jishaku.functools import AsyncSender
 from jishaku.math import format_bargraph, format_stddev
 from jishaku.paginators import PaginatorInterface, WrappedPaginator, use_file_check
-from jishaku.repl import AsyncCodeExecutor, Scope, all_inspections, create_tree, disassemble, get_adaptive_spans, get_var_dict_from_ctx
+from jishaku.repl import (
+    AsyncCodeExecutor,
+    Scope,
+    all_inspections,
+    create_tree,
+    disassemble,
+    get_adaptive_spans,
+    get_var_dict_from_ctx,
+)
 from jishaku.types import ContextA
 
 try:
@@ -63,7 +69,7 @@ class PythonFeature(Feature):
         return Scope()
 
     @Feature.Command(parent="jsk", name="retain")
-    async def jsk_retain(self, ctx: ContextA, *, toggle: bool = None):  # type: ignore
+    async def jsk_retain(self, ctx: ContextA, *, toggle: bool | None = None):  # type: ignore
         """
         Turn variable retention for REPL on or off.
 
@@ -146,7 +152,7 @@ class PythonFeature(Feature):
         interface = PaginatorInterface(ctx.bot, paginator, owner=ctx.author)
         return await interface.send_to(ctx)
 
-    def jsk_python_get_convertables(self, ctx: ContextA) -> typing.Tuple[typing.Dict[str, typing.Any], typing.Dict[str, str]]:
+    def jsk_python_get_convertables(self, ctx: ContextA) -> tuple[dict[str, typing.Any], dict[str, str]]:
         """
         Gets the arg dict and convertables for this scope.
 
@@ -156,7 +162,7 @@ class PythonFeature(Feature):
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
         arg_dict["_"] = self.last_result
-        convertables: typing.Dict[str, str] = {}
+        convertables: dict[str, str] = {}
 
         if getattr(ctx, 'interaction', None) is None:
             for index, user in enumerate(ctx.message.mentions):
@@ -285,9 +291,9 @@ class PythonFeature(Feature):
 
                         overall_start = time.perf_counter()
                         count: int = 0
-                        timings: typing.List[float] = []
-                        ioless_timings: typing.List[float] = []
-                        line_timings: typing.Dict[int, typing.List[float]] = collections.defaultdict(list)
+                        timings: list[float] = []
+                        ioless_timings: list[float] = []
+                        line_timings: dict[int, list[float]] = collections.defaultdict(list)
 
                         while count < 10_000 and (time.perf_counter() - overall_start) < 30.0:
                             profile = line_profiler.LineProfiler()  # type: ignore
@@ -334,7 +340,7 @@ class PythonFeature(Feature):
                         max_line_time = max(max(timing) for timing in line_timings.values())
 
                         linecache = executor.create_linecache()
-                        lines: typing.List[str] = []
+                        lines: list[str] = []
 
                         for lineno in sorted(line_timings.keys()):
                             timing = line_timings[lineno]

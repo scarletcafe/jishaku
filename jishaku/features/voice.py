@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.voice
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,7 +9,6 @@ The jishaku core voice-related commands.
 
 """
 
-import typing
 
 import discord
 import discord.opus
@@ -105,7 +102,7 @@ class VoiceFeature(Feature):
         self,
         ctx: ContextA,
         *,
-        destination: typing.Union[discord.VoiceChannel, discord.Member] = None  # type: ignore
+        destination: discord.VoiceChannel | discord.Member = None  # type: ignore
     ):
         """
         Joins a voice channel, or moves to it if already connected.

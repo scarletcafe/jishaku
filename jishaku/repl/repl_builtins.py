@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.repl_builtins
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,14 +24,16 @@ async def http_get_bytes(*args: typing.Any, **kwargs: typing.Any) -> bytes:
     The arguments to pass are the same as :func:`aiohttp.ClientSession.get`.
     """
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(*args, **kwargs) as response:
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(*args, **kwargs) as response
+    ):
             response.raise_for_status()
 
             return await response.read()
 
 
-async def http_get_json(*args: typing.Any, **kwargs: typing.Any) -> typing.Dict[typing.Any, typing.Any]:
+async def http_get_json(*args: typing.Any, **kwargs: typing.Any) -> dict[typing.Any, typing.Any]:
     """
     Performs a HTTP GET request against a URL,
     returning the response payload as a dictionary of the response payload interpreted as JSON.
@@ -41,11 +41,13 @@ async def http_get_json(*args: typing.Any, **kwargs: typing.Any) -> typing.Dict[
     The arguments to pass are the same as :func:`aiohttp.ClientSession.get`.
     """
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(*args, **kwargs) as response:
-            response.raise_for_status()
+    async with (
+        aiohttp.ClientSession() as session,
+        session.get(*args, **kwargs) as response
+    ):
+        response.raise_for_status()
 
-            return await response.json()
+        return await response.json()
 
 
 async def http_post_bytes(*args: typing.Any, **kwargs: typing.Any) -> bytes:
@@ -55,14 +57,16 @@ async def http_post_bytes(*args: typing.Any, **kwargs: typing.Any) -> bytes:
     The arguments to pass are the same as :func:`aiohttp.ClientSession.post`.
     """
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(*args, **kwargs) as response:
-            response.raise_for_status()
+    async with (
+        aiohttp.ClientSession() as session,
+        session.post(*args, **kwargs) as response
+    ):
+        response.raise_for_status()
 
-            return await response.read()
+        return await response.read()
 
 
-async def http_post_json(*args: typing.Any, **kwargs: typing.Any) -> typing.Dict[typing.Any, typing.Any]:
+async def http_post_json(*args: typing.Any, **kwargs: typing.Any) -> dict[typing.Any, typing.Any]:
     """
     Performs a HTTP POST request against a URL,
     returning the response payload as a dictionary of the response payload interpreted as JSON.
@@ -70,14 +74,16 @@ async def http_post_json(*args: typing.Any, **kwargs: typing.Any) -> typing.Dict
     The arguments to pass are the same as :func:`aiohttp.ClientSession.post`.
     """
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(*args, **kwargs) as response:
-            response.raise_for_status()
+    async with (
+        aiohttp.ClientSession() as session,
+        session.post(*args, **kwargs) as response
+    ):
+        response.raise_for_status()
 
-            return await response.json()
+        return await response.json()
 
 
-def get_var_dict_from_ctx(ctx: ContextA, prefix: str = '_') -> typing.Dict[str, typing.Any]:
+def get_var_dict_from_ctx(ctx: ContextA, prefix: str = '_') -> dict[str, typing.Any]:
     """
     Returns the dict to be used in REPL for a given Context.
     """
