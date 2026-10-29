@@ -47,9 +47,12 @@ dynamic = [
 name = "Devon (scarletcafe) R"
 
 [project.urls]
-source = "https://github.com/scarletcafe/jishaku"
-documentation = "https://jishaku.readthedocs.io/en/latest/"
-issues = "https://github.com/scarletcafe/jishaku/issues"
+# The keys should be "well-known" but in standard English casing,
+# for whatever reason they are shown verbatim on PyPI.
+# https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-project-urls
+Source = "https://github.com/scarletcafe/jishaku"
+Documentation = "https://jishaku.readthedocs.io/en/latest/"
+Issues = "https://github.com/scarletcafe/jishaku/issues"
 
 
 [tool.pytest]
