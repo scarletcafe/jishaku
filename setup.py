@@ -100,25 +100,13 @@ with open(ROOT / 'README.md', 'r', encoding='utf-8') as f:
 
 
 setup(
-    name='jishaku',
-    author='Devon (scarletcafe) R',
-    url='https://github.com/scarletcafe/jishaku',
-
-    license='MIT',
-    description='A discord.py extension including useful tools for bot development and debugging.',
     long_description=README,
     long_description_content_type='text/markdown',
-    project_urls={
-        'Documentation': 'https://jishaku.readthedocs.io/en/latest/',
-        'Code': 'https://github.com/scarletcafe/jishaku',
-        'Issue tracker': 'https://github.com/scarletcafe/jishaku/issues'
-    },
 
     version=version,
     packages=['jishaku', 'jishaku.features', 'jishaku.repl'],
     include_package_data=True,
     install_requires=REQUIREMENTS,
-    python_requires='>=3.10.0',
 
     extras_require=EXTRA_REQUIRES,
     entry_points={
@@ -128,26 +116,4 @@ setup(
     },
 
     download_url=f'https://github.com/scarletcafe/jishaku/archive/{version}.tar.gz',
-
-    keywords='jishaku discord.py discord cog repl extension',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Framework :: AsyncIO',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: 3.13',
-        'Programming Language :: Python :: 3.14',
-        'Programming Language :: Python :: 3.15',
-        'Topic :: Communications :: Chat',
-        'Topic :: Internet',
-        'Topic :: Software Development :: Debuggers',
-        'Topic :: Software Development :: Testing',
-        'Topic :: Utilities'
-    ]
 )
