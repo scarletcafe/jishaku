@@ -21,17 +21,18 @@ jobs:
           - {version: '3.12'}
           - {version: '3.13'}
           - {version: '3.14'}
+          - {version: '3.15'}
         discord-py:
           - {NAME: 'pypi', PIP_TARGET: 'discord.py[voice]'}
           - {NAME: 'git', PIP_TARGET: 'discord.py[voice] @ git+https://github.com/Rapptz/discord.py@master'}
     name: "${{ matrix.os }} CPython ${{ matrix.python.version }} with ${{ matrix.discord-py.NAME }} discord.py"
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python.version }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python.version }}
 
@@ -98,15 +99,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: true
 
-      - name: Set up Python 3.14
-        uses: actions/setup-python@v6
+      - name: Set up Python 3.15
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.14'  # Watch as I let this get handled as a float again
+          python-version: '3.15'  # Watch as I let this get handled as a float again
 
       - name: Install dependencies
         shell: bash
@@ -123,7 +124,7 @@ jobs:
           # Very cool.
           # We don't have any native code so using the latest Ubuntu artifact should be OK.
           #pattern: distributions-*
-          pattern: distributions-ubuntu-latest-3.14-pypi
+          pattern: distributions-ubuntu-latest-3.15-pypi
           merge-multiple: true
           path: dist
 
@@ -147,4 +148,4 @@ jobs:
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.14.0
+        uses: pypa/gh-action-pypi-publish@v1.14.3
