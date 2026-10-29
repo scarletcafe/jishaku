@@ -10,7 +10,7 @@ This version drops support for Python versions before 3.10 and fixes commands on
 With this, the jishaku codebase has received a few refreshes, including moving many type annotations over to 3.10 syntax.
 
 - Dropped support for Python 3.8 and 3.9. Python 3.10 is now the lowest supported version.
-- Removed ``jishaku.codeblocks.codeblock_converter``. Code blocks are now converted using an `inline advanced converter <https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html#inline-advanced-converters>`. If you need to convert code blocks manually, you can do so with ``jishaku.codeblocks.Codeblock.convert_raw``.
+- Removed ``jishaku.codeblocks.codeblock_converter``. Code blocks are now converted using an `inline advanced converter <https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html#inline-advanced-converters>`_. If you need to convert code blocks manually, you can do so with ``jishaku.codeblocks.Codeblock.convert_raw``.
 - Fix ``del`` statements in the Python REPL failing on Python 3.15 due to unsupported AST constructor arguments (PR `#255 <https://github.com/scarletcafe/jishaku/pull/255>`_, thanks `@Pyker <https://github.com/Pyker>`_ for implementation).
 
 Version 2.7.5
