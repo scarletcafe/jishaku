@@ -19,7 +19,7 @@ import typing
 
 import discord
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
+from jishaku.codeblocks import Codeblock
 from jishaku.exception_handling import ReplResponseReactor
 from jishaku.features.baseclass import Feature
 from jishaku.flags import Flags
@@ -180,13 +180,10 @@ class PythonFeature(Feature):
         return arg_dict, convertables
 
     @Feature.Command(parent="jsk", name="py", aliases=["python"])
-    async def jsk_python(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_python(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Direct evaluation of Python code.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict, convertables = self.jsk_python_get_convertables(ctx)
         scope = self.scope
@@ -210,13 +207,10 @@ class PythonFeature(Feature):
             scope.clear_intersection(arg_dict)
 
     @Feature.Command(parent="jsk", name="py_inspect", aliases=["pyi", "python_inspect", "pythoninspect"])
-    async def jsk_python_inspect(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_python_inspect(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Evaluation of Python code with inspect information.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict, convertables = self.jsk_python_get_convertables(ctx)
         scope = self.scope
@@ -268,13 +262,10 @@ class PythonFeature(Feature):
 
     if line_profiler is not None:
         @Feature.Command(parent="jsk", name="timeit")
-        async def jsk_timeit(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_timeit(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
             """
             Times and produces a relative timing report for a block of code.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             arg_dict, convertables = self.jsk_python_get_convertables(ctx)
             scope = self.scope
@@ -370,13 +361,10 @@ class PythonFeature(Feature):
                 scope.clear_intersection(arg_dict)
 
     @Feature.Command(parent="jsk", name="dis", aliases=["disassemble"])
-    async def jsk_disassemble(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_disassemble(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Disassemble Python code into bytecode.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
 
@@ -397,13 +385,10 @@ class PythonFeature(Feature):
                 await interface.send_to(ctx)
 
     @Feature.Command(parent="jsk", name="ast")
-    async def jsk_ast(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_ast(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Disassemble Python code into AST.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         async with ReplResponseReactor(ctx.message):
             text = create_tree(argument.content, use_ansi=Flags.use_ansi(ctx))
@@ -415,13 +400,10 @@ class PythonFeature(Feature):
 
     if sys.version_info >= (3, 11):
         @Feature.Command(parent="jsk", name="specialist")
-        async def jsk_specialist(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_specialist(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
             """
             Direct evaluation of Python code.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             arg_dict, convertables = self.jsk_python_get_convertables(ctx)
             scope = self.scope

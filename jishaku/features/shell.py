@@ -21,7 +21,7 @@ import discord
 from discord import ui
 from discord.ext import commands
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
+from jishaku.codeblocks import Codeblock
 from jishaku.exception_handling import ReplResponseReactor
 from jishaku.features.baseclass import Feature
 from jishaku.flags import Flags
@@ -100,16 +100,13 @@ class ShellFeature(Feature):
                 )
 
     @Feature.Command(parent="jsk", name="shell", aliases=["bash", "sh", "powershell", "ps1", "ps", "cmd", "terminal"])
-    async def jsk_shell(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_shell(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Executes statements in the system shell.
 
         This uses the system shell as defined in $SHELL, or `/bin/bash` otherwise.
         Execution can be cancelled by closing the paginator.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         async with ReplResponseReactor(ctx.message):
             with self.submit(ctx):
@@ -136,24 +133,18 @@ class ShellFeature(Feature):
                 await interface.add_line(f"\n[status] Return code {reader.close_code}")
 
     @Feature.Command(parent="jsk", name="git")
-    async def jsk_git(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_git(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Shortcut for 'jsk sh git'. Invokes the system shell.
         """
 
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
-
         return await ctx.invoke(self.jsk_shell, argument=Codeblock(argument.language, "git " + argument.content))  # type: ignore
 
     @Feature.Command(parent="jsk", name="pip")
-    async def jsk_pip(self, ctx: commands.Context, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_pip(self, ctx: commands.Context, *, argument: Codeblock):  # type: ignore
         """
         Shortcut for 'jsk sh pip'. Invokes the system shell.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         executable: str = "pip"
         location = pathlib.Path(sys.prefix)
@@ -172,13 +163,10 @@ class ShellFeature(Feature):
 
     if shutil.which('node') and shutil.which('npm'):
         @Feature.Command(parent="jsk", name="node")
-        async def jsk_node(self, ctx: commands.Context, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_node(self, ctx: commands.Context, *, argument: Codeblock):  # type: ignore
             """
             Shortcut for scaffolding and executing 'npm run'. Only exists if the executables are detected.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             requirements = ''.join(f"npm install {match} && " for match in re.findall('// jsk require: (.+)', argument.content))
 
@@ -187,26 +175,20 @@ class ShellFeature(Feature):
 
     if shutil.which('pyright'):
         @Feature.Command(parent="jsk", name="pyright")
-        async def jsk_pyright(self, ctx: commands.Context, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_pyright(self, ctx: commands.Context, *, argument: Codeblock):  # type: ignore
             """
             Shortcut for scaffolding and executing 'pyright main.py'. Only exists if the executables are detected.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             with scaffold('pyright', content=argument.content) as directory:
                 return await ctx.invoke(self.jsk_shell, argument=Codeblock("js", f"cd {directory} && pyright main.py"))  # type: ignore
 
     if shutil.which('rustc') and shutil.which('cargo'):
         @Feature.Command(parent="jsk", name="rustc")
-        async def jsk_rustc(self, ctx: commands.Context, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_rustc(self, ctx: commands.Context, *, argument: Codeblock):  # type: ignore
             """
             Shortcut for scaffolding and executing 'cargo run'. Only exists if the executables are detected.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             requirements = '\n'.join(re.findall('// jsk require: (.+)', argument.content))
 
