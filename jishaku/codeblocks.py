@@ -11,9 +11,15 @@ Converters for detecting and obtaining codeblock content
 
 import collections
 import re
+import sys
 import typing
 
 from discord.ext import commands
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 __all__ = ('Codeblock',)
 
@@ -27,7 +33,7 @@ class Codeblock(typing.NamedTuple):
     content: str
 
     @classmethod
-    def convert_raw(cls, argument: str) -> typing.Self:
+    def convert_raw(cls, argument: str) -> Self:
         # Remove direction-controlling characters sometimes inserted by Discord around codeblocks
         # https://github.com/scarletcafe/jishaku/issues/253#issuecomment-3831488396
         argument = re.sub('[\u2066-\u206D]', '', argument).strip()
@@ -68,7 +74,7 @@ class Codeblock(typing.NamedTuple):
         return cls(''.join(language), ''.join(code[len(language):-backticks]))
 
     @classmethod
-    def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> typing.Self:
+    def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> Self:
         """
         A converter that strips codeblock markdown if it exists.
 
