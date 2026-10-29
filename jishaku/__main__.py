@@ -61,7 +61,7 @@ async def entry(bot: commands.Bot, *args: typing.Any, **kwargs: typing.Any):
         else:
             try:
                 pyperclip.copy(f'{bot.unique_id}::jsk')  # type: ignore
-            except Exception as error:  # pylint: disable=broad-except
+            except Exception as error:  # ruff: ignore[BLE001]
                 LOGGER.critical(
                     'The prefix could not be copied to your clipboard: %s',
                     error

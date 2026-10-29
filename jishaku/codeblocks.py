@@ -20,23 +20,14 @@ __all__ = ('Codeblock',)
 
 class Codeblock(typing.NamedTuple):
     """
-    Represents a parsed codeblock from codeblock_converter
+    Represents a parsed codeblock
     """
 
     language: str | None
     content: str
 
     @classmethod
-    def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> typing.Self:
-        """
-        A converter that strips codeblock markdown if it exists.
-
-        Returns a namedtuple of (language, content).
-
-        :attr:`Codeblock.language` is an empty string if no language was given with this codeblock.
-        It is ``None`` if the input was not a complete codeblock.
-        """
-
+    def convert_raw(cls, argument: str) -> typing.Self:
         # Remove direction-controlling characters sometimes inserted by Discord around codeblocks
         # https://github.com/scarletcafe/jishaku/issues/253#issuecomment-3831488396
         argument = re.sub('[\u2066-\u206D]', '', argument).strip()
@@ -75,3 +66,16 @@ class Codeblock(typing.NamedTuple):
             code[:] = last
 
         return cls(''.join(language), ''.join(code[len(language):-backticks]))
+
+    @classmethod
+    def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> typing.Self:
+        """
+        A converter that strips codeblock markdown if it exists.
+
+        Returns a namedtuple of (language, content).
+
+        :attr:`Codeblock.language` is an empty string if no language was given with this codeblock.
+        It is ``None`` if the input was not a complete codeblock.
+        """
+
+        return cls.convert_raw(argument)

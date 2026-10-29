@@ -55,3 +55,8 @@ issues = "https://github.com/scarletcafe/jishaku/issues"
 [tool.pytest]
 asyncio_mode = "strict"
 pythonpath = ["."]
+
+[tool.ruff.lint]
+ignore = [
+    "ASYNC230"  # "Don't use open in async contexts" - I think this overstates the dangers of it a bit too much
+]

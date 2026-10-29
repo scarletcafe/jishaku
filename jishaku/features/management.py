@@ -33,14 +33,12 @@ class ManagementFeature(Feature):
     """
 
     @Feature.Command(parent="jsk", name="load", aliases=["reload"])
-    async def jsk_load(self, ctx: ContextA, *extensions: ExtensionConverter):  # type: ignore
+    async def jsk_load(self, ctx: ContextA, *extensions: typing.Annotated[list[str], ExtensionConverter]):  # type: ignore
         """
         Loads or reloads the given extension names.
 
         Reports any extensions that failed to load.
         """
-
-        extensions: typing.Iterable[list[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
 
@@ -57,7 +55,7 @@ class ManagementFeature(Feature):
 
             try:
                 await discord.utils.maybe_coroutine(method, extension)
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # ruff: ignore[BLE001]
                 if isinstance(exc, commands.ExtensionFailed) and exc.__cause__:
                     cause = exc.__cause__
                     traceback_data = ''.join(traceback.format_exception(type(cause), cause, cause.__traceback__, 8))
@@ -75,14 +73,12 @@ class ManagementFeature(Feature):
             await ctx.send(page)
 
     @Feature.Command(parent="jsk", name="unload")
-    async def jsk_unload(self, ctx: ContextA, *extensions: ExtensionConverter):  # type: ignore
+    async def jsk_unload(self, ctx: ContextA, *extensions: typing.Annotated[list[str], ExtensionConverter]):  # type: ignore
         """
         Unloads the given extension names.
 
         Reports any extensions that failed to unload.
         """
-
-        extensions: typing.Iterable[list[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
         icon = "\N{OUTBOX TRAY}"
@@ -90,7 +86,7 @@ class ManagementFeature(Feature):
         for extension in itertools.chain(*extensions):
             try:
                 await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # ruff: ignore[BLE001]
                 traceback_data = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__, 2))
 
                 paginator.add_line(
@@ -314,10 +310,10 @@ class ManagementFeature(Feature):
                                     ":",
                                     str(inspections.line_span_inspection(to_inspect)),  # type: ignore
                                 ]))
-                            except Exception:  # pylint: disable=broad-except
+                            except Exception:  # ruff: ignore[BLE001]
                                 error_lines.append(f"\N{MAGNET} This is likely caused by: `{name}`")
 
-                    except Exception as diag_error:  # pylint: disable=broad-except
+                    except Exception as diag_error:  # ruff: ignore[BLE001]
                         error_lines.append(f"\N{MAGNET} Couldn't determine cause: {type(diag_error).__name__}: {diag_error}")
 
                 error_text = '\n'.join(error_lines)
