@@ -31,7 +31,7 @@ class VersionInfo(typing.NamedTuple):
     serial: int
 
 
-version_info = VersionInfo(major=2, minor=7, micro=5, releaselevel='final', serial=0)
+version_info = VersionInfo(major=2, minor=8, micro=0, releaselevel='final', serial=0)
 
 __author__ = 'scarletcafe'
 __copyright__ = 'Copyright 2021 Devon (scarletcafe) R'
