@@ -74,7 +74,7 @@ class Codeblock(typing.NamedTuple):
         return cls(''.join(language), ''.join(code[len(language):-backticks]))
 
     @classmethod
-    def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> Self:
+    async def convert(cls, ctx: commands.Context[typing.Any], argument: str) -> Self:
         """
         A converter that strips codeblock markdown if it exists.
 
