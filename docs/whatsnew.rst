@@ -3,6 +3,13 @@
 What's new?
 ================
 
+Version 2.8.1
+-------------
+
+This is a minor patch release to fix a bug introduced by the ``Codeblock`` converter changes in the previous version.
+
+- Prevent TypeError when using Codeblock as command argument in certain situations (PR `#256 <https://github.com/scarletcafe/jishaku/pull/256>`_, thanks `@Vioshim <https://github.com/Vioshim>`_ for fix).
+
 Version 2.8.0
 -------------
 
