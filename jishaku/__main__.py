@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.__main__
 ~~~~~~~~~~~~~~~~~
@@ -10,7 +8,7 @@ It has console logging set up and uses a mention prefix.
 This is mostly intended to be a quick means to have a debuggable bot from a token.
 It can be used to perform manual administrative actions as the bot, or to test Jishaku itself.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -63,7 +61,7 @@ async def entry(bot: commands.Bot, *args: typing.Any, **kwargs: typing.Any):
         else:
             try:
                 pyperclip.copy(f'{bot.unique_id}::jsk')  # type: ignore
-            except Exception as error:  # pylint: disable=broad-except
+            except Exception as error:  # ruff: ignore[BLE001]
                 LOGGER.critical(
                     'The prefix could not be copied to your clipboard: %s',
                     error
@@ -93,7 +91,7 @@ def entrypoint(
     intents: typing.Iterable[str],
     token: str,
     log_level: str,
-    log_file: typing.Optional[str] = None,
+    log_file: str | None = None,
     load_extension: typing.Iterable[str] = (),
     skip_wait: bool = False
 ):
@@ -156,7 +154,7 @@ def entrypoint(
                 f"Intent argument {intent} is invalid; the intent {name} was not found."
             )
 
-    def prefix(bot: commands.Bot, _: discord.Message) -> typing.List[str]:
+    def prefix(bot: commands.Bot, _: discord.Message) -> list[str]:
         return [
             f'{bot.unique_id}::',  # type: ignore
             f'<@{bot.user.id}> {bot.unique_id}::',  # type: ignore

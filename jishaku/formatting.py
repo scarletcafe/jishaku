@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.formatting
 ~~~~~~~~~~~~~~~~~~~
 
 Advanced formatting constructs
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -47,10 +45,10 @@ class LineAnnotation:
     """
 
     text: str
-    span: typing.Optional[typing.Tuple[int, int]]
-    annotation_ansi: typing.Union[typing.Sequence[int], int, None] = None
-    text_foreground: typing.Optional[int] = None
-    text_background: typing.Optional[int] = None
+    span: tuple[int, int] | None
+    annotation_ansi: typing.Sequence[int] | int | None = None
+    text_foreground: int | None = None
+    text_background: int | None = None
 
 
 class LineFormatter:
@@ -68,14 +66,14 @@ class LineFormatter:
     def __init__(self, line: str):
         self.line: str = line
         self.max_annotation_size: int = 0
-        self.annotations: typing.List[LineAnnotation] = []
+        self.annotations: list[LineAnnotation] = []
 
     def add_annotation(
         self,
-        text: str, span: typing.Optional[typing.Tuple[int, int]],
-        annotation_ansi: typing.Union[typing.Sequence[int], int, None] = None,
-        text_foreground: typing.Optional[int] = None,
-        text_background: typing.Optional[int] = None
+        text: str, span: tuple[int, int] | None,
+        annotation_ansi: typing.Sequence[int] | int | None = None,
+        text_foreground: int | None = None,
+        text_background: int | None = None
     ):
         """
         Add an annotation to the line formatter.
@@ -94,7 +92,7 @@ class LineFormatter:
         Output the line and associated annotations, optionally with color
         """
 
-        lines: typing.List[str] = []
+        lines: list[str] = []
         block = BLOCK_CHARACTERS_FANCY if use_complex else BLOCK_CHARACTERS_SIMPLE
 
         # The main line
@@ -151,7 +149,7 @@ class LineFormatter:
             lines.append(" " * (self.max_annotation_size + 2) + self.line)
 
         # Format the annotations
-        annotation_strokes: typing.List[typing.Tuple[int, int, typing.Union[typing.Sequence[int], int, None]]] = []
+        annotation_strokes: list[tuple[int, int, typing.Sequence[int] | int | None]] = []
 
         # Stroke generation pass
         for index, annotation in enumerate(self.annotations):
@@ -163,7 +161,7 @@ class LineFormatter:
         # Sort by stroke position, and then annotations so that earlier annotations take priority
         annotation_strokes.sort(key=lambda s: (s[1], s[0]))
 
-        def to_ansi_text(ansi: typing.Union[typing.Sequence[int], int, None]) -> str:
+        def to_ansi_text(ansi: typing.Sequence[int] | int | None) -> str:
             if ansi is None:
                 return "\u001b[0m"
             if isinstance(ansi, int):
@@ -233,22 +231,28 @@ class MultilineFormatter:
     """
     A wrapper around LineFormatter that allows annotating a full block of text.
     """
-    def __init__(self, text: str):
-        self.lines: typing.List[LineFormatter] = [
+    def __init__(self, text: str, add_newline: bool = False):
+        if add_newline:
+            text = text + "\n"
+
+        self.lines: list[LineFormatter] = [
             LineFormatter(line) for line in text.splitlines()
         ]
 
     def add_annotation(
         self,
         line: int,
-        text: str, span: typing.Optional[typing.Tuple[int, int]],
-        annotation_ansi: typing.Union[typing.Sequence[int], int, None] = None,
-        text_foreground: typing.Optional[int] = None,
-        text_background: typing.Optional[int] = None
+        text: str, span: tuple[int, int] | None,
+        annotation_ansi: typing.Sequence[int] | int | None = None,
+        text_foreground: int | None = None,
+        text_background: int | None = None
     ):
         """
         Add an annotation to a line of this formatter.
         The order in which the annotations are added matters.
+
+        Argument `line` must be a valid index to :attr:`MultilineFormatter.lines`,
+        else this will raise `IndexError`.
         """
 
         self.lines[line].add_annotation(text, span, annotation_ansi, text_foreground, text_background)
@@ -259,7 +263,7 @@ class MultilineFormatter:
         """
         max_line = max(formatter.max_annotation_size for formatter in self.lines)
 
-        lines: typing.List[str] = []
+        lines: list[str] = []
         for formatter in self.lines:
             formatter.max_annotation_size = max_line
             lines.append(formatter.output(use_complex, use_ansi))

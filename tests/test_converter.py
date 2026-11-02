@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku converter test
 ~~~~~~~~~~~~~~~~~~~~~~
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
 import inspect
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
+from jishaku.codeblocks import Codeblock
 
 
 def test_codeblock_converter():
@@ -21,7 +19,7 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'one'
@@ -33,7 +31,7 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'two'
@@ -45,7 +43,7 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'three'
@@ -57,7 +55,7 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'four'
@@ -65,7 +63,7 @@ def test_codeblock_converter():
 
     text = "five"
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'five'
@@ -76,7 +74,7 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'six\n```'
@@ -84,7 +82,7 @@ def test_codeblock_converter():
 
     text = ""
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
 
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == ''
@@ -96,19 +94,19 @@ def test_codeblock_converter():
     ```
     """
 
-    codeblock = codeblock_converter(inspect.cleandoc(text))
+    codeblock = Codeblock.convert_raw(inspect.cleandoc(text))
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'se``ven'
     assert not codeblock.language
 
     text = "``ei`ght``"
-    codeblock = codeblock_converter(text)
+    codeblock = Codeblock.convert_raw(text)
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'ei`ght'
     assert not codeblock.language
 
     text = "`nine`"
-    codeblock = codeblock_converter(text)
+    codeblock = Codeblock.convert_raw(text)
     assert isinstance(codeblock, Codeblock)
     assert codeblock.content.strip() == 'nine'
     assert not codeblock.language

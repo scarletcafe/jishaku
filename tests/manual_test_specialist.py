@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku manual specialist test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -7,7 +5,7 @@ jishaku manual specialist test
 This test checks that blockformats look OK and function correctly.
 You should run it in a bash-like shell (that supports ANSI codes).
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """

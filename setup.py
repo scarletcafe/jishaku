@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 """
 MIT License
 
-Copyright (c) 2021 Devon (Gorialis) R
+Copyright (c) 2024 Devon (scarletcafe) R
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +27,6 @@ import os
 import pathlib
 import re
 import subprocess
-import typing
 
 from setuptools import setup
 
@@ -43,7 +40,7 @@ with open(ROOT / 'jishaku' / 'meta.py', 'r', encoding='utf-8') as f:
 
     version = '.'.join([VERSION_MATCH.group(1), VERSION_MATCH.group(2), VERSION_MATCH.group(3)])
 
-EXTRA_REQUIRES: typing.Dict[str, typing.List[str]] = {}
+EXTRA_REQUIRES: dict[str, list[str]] = {}
 
 for feature in (ROOT / 'requirements').glob('*.txt'):
     with open(feature, 'r', encoding='utf-8') as f:
@@ -74,7 +71,7 @@ try:
         COMMIT_HASH, err = process.communicate()
 
         if COMMIT_HASH:
-            match = re.match(r'(\d).(\d).(\d)(a|b|rc)?', os.getenv('tag_name') or "")
+            match = re.match(r'(\d).(\d).(\d)(a|b|rc)?', os.getenv('version_name') or "")
 
             if (match and match[4]) or not match:
                 version += ('' if match else 'a') + COMMIT_COUNT.decode('utf-8').strip() + '+g' + COMMIT_HASH.decode('utf-8').strip()
@@ -100,25 +97,13 @@ with open(ROOT / 'README.md', 'r', encoding='utf-8') as f:
 
 
 setup(
-    name='jishaku',
-    author='Devon (Gorialis) R',
-    url='https://github.com/Gorialis/jishaku',
-
-    license='MIT',
-    description='A discord.py extension including useful tools for bot development and debugging.',
     long_description=README,
     long_description_content_type='text/markdown',
-    project_urls={
-        'Documentation': 'https://jishaku.readthedocs.io/en/latest/',
-        'Code': 'https://github.com/Gorialis/jishaku',
-        'Issue tracker': 'https://github.com/Gorialis/jishaku/issues'
-    },
 
     version=version,
     packages=['jishaku', 'jishaku.features', 'jishaku.repl'],
     include_package_data=True,
     install_requires=REQUIREMENTS,
-    python_requires='>=3.8.0',
 
     extras_require=EXTRA_REQUIRES,
     entry_points={
@@ -127,26 +112,5 @@ setup(
         ],
     },
 
-    download_url=f'https://github.com/Gorialis/jishaku/archive/{version}.tar.gz',
-
-    keywords='jishaku discord.py discord cog repl extension',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Framework :: AsyncIO',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
-        'Programming Language :: Python :: 3.11',
-        'Programming Language :: Python :: 3.12',
-        'Topic :: Communications :: Chat',
-        'Topic :: Internet',
-        'Topic :: Software Development :: Debuggers',
-        'Topic :: Software Development :: Testing',
-        'Topic :: Utilities'
-    ]
+    download_url=f'https://github.com/scarletcafe/jishaku/archive/{version}.tar.gz',
 )

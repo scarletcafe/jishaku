@@ -5,14 +5,13 @@ formats: []
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.11"
+    python: "3.12"
 
 sphinx:
   configuration: docs/conf.py
 
 python:
   install:
-    - requirements: requirements/discordpy.txt
     - method: pip
       path: .
     - requirements: requirements/docs.txt

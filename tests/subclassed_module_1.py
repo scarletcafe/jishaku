@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku subclassing test 1
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -9,7 +7,7 @@ discover weird behaviors related to subclassing.
 
 This variant overrides behavior using a Feature.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """

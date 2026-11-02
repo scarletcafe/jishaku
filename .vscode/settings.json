@@ -1,19 +1,14 @@
 {
-    "python.linting.pylintEnabled": true,
-    "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true,
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "python.analysis.typeCheckingMode": "strict",
     "python.testing.pytestArgs": [
         "."
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
     "python.testing.pytestEnabled": true,
-    "restructuredtext.confPath": "",
     "esbonio.server.enabled": true,
-    "yaml.schemas": {
-        "https://raw.githubusercontent.com/readthedocs/readthedocs.org/master/readthedocs/rtd_tests/fixtures/spec/v2/schema.json": "file:///t%3A/GitHub/jishaku/.readthedocs.yml",
-        "https://json.schemastore.org/github-workflow.json": "file:///t%3A/GitHub/jishaku/.github/workflows/deploy.yml"
-    },
-    "esbonio.sphinx.confDir": "",
-    "python.analysis.typeCheckingMode": "strict"
+    "esbonio.sphinx.confDir": ""
 }

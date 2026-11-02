@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.python
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The jishaku Python evaluation/execution commands.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -21,7 +19,7 @@ import typing
 
 import discord
 
-from jishaku.codeblocks import Codeblock, codeblock_converter
+from jishaku.codeblocks import Codeblock
 from jishaku.exception_handling import ReplResponseReactor
 from jishaku.features.baseclass import Feature
 from jishaku.flags import Flags
@@ -29,7 +27,15 @@ from jishaku.formatting import MultilineFormatter
 from jishaku.functools import AsyncSender
 from jishaku.math import format_bargraph, format_stddev
 from jishaku.paginators import PaginatorInterface, WrappedPaginator, use_file_check
-from jishaku.repl import AsyncCodeExecutor, Scope, all_inspections, create_tree, disassemble, get_adaptive_spans, get_var_dict_from_ctx
+from jishaku.repl import (
+    AsyncCodeExecutor,
+    Scope,
+    all_inspections,
+    create_tree,
+    disassemble,
+    get_adaptive_spans,
+    get_var_dict_from_ctx,
+)
 from jishaku.types import ContextA
 
 try:
@@ -63,7 +69,7 @@ class PythonFeature(Feature):
         return Scope()
 
     @Feature.Command(parent="jsk", name="retain")
-    async def jsk_retain(self, ctx: ContextA, *, toggle: bool = None):  # type: ignore
+    async def jsk_retain(self, ctx: ContextA, *, toggle: bool | None = None):  # type: ignore
         """
         Turn variable retention for REPL on or off.
 
@@ -146,7 +152,7 @@ class PythonFeature(Feature):
         interface = PaginatorInterface(ctx.bot, paginator, owner=ctx.author)
         return await interface.send_to(ctx)
 
-    def jsk_python_get_convertables(self, ctx: ContextA) -> typing.Tuple[typing.Dict[str, typing.Any], typing.Dict[str, str]]:
+    def jsk_python_get_convertables(self, ctx: ContextA) -> tuple[dict[str, typing.Any], dict[str, str]]:
         """
         Gets the arg dict and convertables for this scope.
 
@@ -156,7 +162,7 @@ class PythonFeature(Feature):
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
         arg_dict["_"] = self.last_result
-        convertables: typing.Dict[str, str] = {}
+        convertables: dict[str, str] = {}
 
         if getattr(ctx, 'interaction', None) is None:
             for index, user in enumerate(ctx.message.mentions):
@@ -174,13 +180,10 @@ class PythonFeature(Feature):
         return arg_dict, convertables
 
     @Feature.Command(parent="jsk", name="py", aliases=["python"])
-    async def jsk_python(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_python(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Direct evaluation of Python code.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict, convertables = self.jsk_python_get_convertables(ctx)
         scope = self.scope
@@ -204,13 +207,10 @@ class PythonFeature(Feature):
             scope.clear_intersection(arg_dict)
 
     @Feature.Command(parent="jsk", name="py_inspect", aliases=["pyi", "python_inspect", "pythoninspect"])
-    async def jsk_python_inspect(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_python_inspect(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Evaluation of Python code with inspect information.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict, convertables = self.jsk_python_get_convertables(ctx)
         scope = self.scope
@@ -262,13 +262,10 @@ class PythonFeature(Feature):
 
     if line_profiler is not None:
         @Feature.Command(parent="jsk", name="timeit")
-        async def jsk_timeit(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_timeit(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
             """
             Times and produces a relative timing report for a block of code.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             arg_dict, convertables = self.jsk_python_get_convertables(ctx)
             scope = self.scope
@@ -285,9 +282,9 @@ class PythonFeature(Feature):
 
                         overall_start = time.perf_counter()
                         count: int = 0
-                        timings: typing.List[float] = []
-                        ioless_timings: typing.List[float] = []
-                        line_timings: typing.Dict[int, typing.List[float]] = collections.defaultdict(list)
+                        timings: list[float] = []
+                        ioless_timings: list[float] = []
+                        line_timings: dict[int, list[float]] = collections.defaultdict(list)
 
                         while count < 10_000 and (time.perf_counter() - overall_start) < 30.0:
                             profile = line_profiler.LineProfiler()  # type: ignore
@@ -334,7 +331,7 @@ class PythonFeature(Feature):
                         max_line_time = max(max(timing) for timing in line_timings.values())
 
                         linecache = executor.create_linecache()
-                        lines: typing.List[str] = []
+                        lines: list[str] = []
 
                         for lineno in sorted(line_timings.keys()):
                             timing = line_timings[lineno]
@@ -364,13 +361,10 @@ class PythonFeature(Feature):
                 scope.clear_intersection(arg_dict)
 
     @Feature.Command(parent="jsk", name="dis", aliases=["disassemble"])
-    async def jsk_disassemble(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_disassemble(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Disassemble Python code into bytecode.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         arg_dict = get_var_dict_from_ctx(ctx, Flags.SCOPE_PREFIX)
 
@@ -391,13 +385,10 @@ class PythonFeature(Feature):
                 await interface.send_to(ctx)
 
     @Feature.Command(parent="jsk", name="ast")
-    async def jsk_ast(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+    async def jsk_ast(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
         """
         Disassemble Python code into AST.
         """
-
-        if typing.TYPE_CHECKING:
-            argument: Codeblock = argument  # type: ignore
 
         async with ReplResponseReactor(ctx.message):
             text = create_tree(argument.content, use_ansi=Flags.use_ansi(ctx))
@@ -409,13 +400,10 @@ class PythonFeature(Feature):
 
     if sys.version_info >= (3, 11):
         @Feature.Command(parent="jsk", name="specialist")
-        async def jsk_specialist(self, ctx: ContextA, *, argument: codeblock_converter):  # type: ignore
+        async def jsk_specialist(self, ctx: ContextA, *, argument: Codeblock):  # type: ignore
             """
             Direct evaluation of Python code.
             """
-
-            if typing.TYPE_CHECKING:
-                argument: Codeblock = argument  # type: ignore
 
             arg_dict, convertables = self.jsk_python_get_convertables(ctx)
             scope = self.scope
@@ -435,13 +423,13 @@ class PythonFeature(Feature):
 
                             send(await self.jsk_python_result_handling(ctx, result))
 
-                        formatter = MultilineFormatter(argument.content)
+                        formatter = MultilineFormatter(argument.content, add_newline=True)
 
                         for (
                             index,
                             (instruction, line, span, specialized, adaptive)
                         ) in enumerate(get_adaptive_spans(executor.function.__code__)):  # pylint: disable=protected-access
-                            if line - 1 < len(formatter.lines):
+                            if 0 <= line - 1 < len(formatter.lines):
                                 formatter.add_annotation(
                                     line - 1,
                                     instruction.opname,

@@ -1,0 +1,65 @@
+[build-system]
+requires = [ "setuptools" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jishaku"
+description = "A discord.py extension including useful tools for bot development and debugging."
+license = "MIT"
+keywords = [
+    "jishaku",
+    "discord.py",
+    "discord",
+    "cog",
+    "repl",
+    "extension",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Communications :: Chat",
+    "Topic :: Internet",
+    "Topic :: Software Development :: Debuggers",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.10"
+
+dynamic = [
+    "version",
+    "readme",
+    "dependencies",
+    "optional-dependencies",
+    "scripts",
+]
+
+[[project.authors]]
+name = "Devon (scarletcafe) R"
+
+[project.urls]
+# The keys should be "well-known" but in standard English casing,
+# for whatever reason they are shown verbatim on PyPI.
+# https://packaging.python.org/en/latest/specifications/well-known-project-urls/#well-known-project-urls
+Source = "https://github.com/scarletcafe/jishaku"
+Documentation = "https://jishaku.readthedocs.io/en/latest/"
+Issues = "https://github.com/scarletcafe/jishaku/issues"
+
+
+[tool.pytest]
+asyncio_mode = "strict"
+pythonpath = ["."]
+
+[tool.ruff.lint]
+ignore = [
+    "ASYNC230"  # "Don't use open in async contexts" - I think this overstates the dangers of it a bit too much
+]

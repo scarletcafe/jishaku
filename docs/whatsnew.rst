@@ -3,12 +3,86 @@
 What's new?
 ================
 
+Version 2.8.1
+-------------
+
+This is a minor patch release to fix a bug introduced by the ``Codeblock`` converter changes in the previous version.
+
+- Prevent TypeError when using Codeblock as command argument in certain situations (PR `#256 <https://github.com/scarletcafe/jishaku/pull/256>`_, thanks `@Vioshim <https://github.com/Vioshim>`_ for fix).
+
+Version 2.8.0
+-------------
+
+This version drops support for Python versions before 3.10 and fixes commands on Python 3.15.
+With this, the jishaku codebase has received a few refreshes, including moving many type annotations over to 3.10 syntax.
+
+- Dropped support for Python 3.8 and 3.9. Python 3.10 is now the lowest supported version.
+- Removed ``jishaku.codeblocks.codeblock_converter``. Code blocks are now converted using an `inline advanced converter <https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html#inline-advanced-converters>`_. If you need to convert code blocks manually, you can do so with ``jishaku.codeblocks.Codeblock.convert_raw``.
+- Fix ``del`` statements in the Python REPL failing on Python 3.15 due to unsupported AST constructor arguments (PR `#255 <https://github.com/scarletcafe/jishaku/pull/255>`_, thanks `@Pyker <https://github.com/Pyker>`_ for implementation).
+
+Version 2.7.5
+-------------
+
+This version is functionally identical to 2.7.0, but is the first functional release to use immutable GitHub releases for better security.
+
+Version 2.7.1-2.7.4
+---------------------
+
+These versions were the first versions to trial immutable releases.
+Due to deployment issues caused by scripts not being written for immutable releases, these version were incomplete and are no longer available.
+
+Version 2.7.0
+-------------
+
+This version is a feature & patch release, being expedited due to Discord introducing strange behaviour regarding code blocks.
+
+The changes in this release are:
+
+- The ``jsk rerun`` command, which allows a previously sent jishaku command to be executed again without needing to re-upload attachments or other message details (PR `#251 <https://github.com/scarletcafe/jishaku/pull/251>`_, thanks `@WitherredAway <https://github.com/WitherredAway>`_ for implementation).
+- Any command that uses code block converters will now strip formatter characters silently added by certain Discord clients in presently-unknown circumstances. This prevents the inability to use a large portion of jishaku in these situations (issue `#253 <https://github.com/scarletcafe/jishaku/issues/253>`_, thanks `@Stacer-Varien <https://github.com/Stacer-Varien>`_ and `@Captain8771 <https://github.com/Captain8771>`_ for reporting).
+
+Version 2.6.3
+-------------
+
+This release is a patch release to fix an issue with erroneous indexing of `MultilineFormatter` in `jsk specialist` under some conditions.
+
+- Increase sanity checking for `MultilineFormatter` to prevent spurious errors (issue `#249 <https://github.com/scarletcafe/jishaku/issues/249>`_, fixed in `61e3aa9`)
+
+Version 2.6.2
+-------------
+
+This release is a patch release to fix a previously unreported issue with `jsk dis` on Python 3.13+
+
+- Fix issue with `dis.Instruction._disassemble` being removed in CPython 3.13+ (issue `#248 <https://github.com/scarletcafe/jishaku/issues/248>`_, fixed in `cbd225e`)
+
+Version 2.6.1
+-------------
+
+This release is a patch release to fix an issue caused by changes in Python 3.14's annotation handling.
+
+- Fall back to `annotationlib` to generate `jishaku.Flags` from its annotations on versions affected by `PEP 649 <https://peps.python.org/pep-0649/>`_ (`#247 <https://github.com/scarletcafe/jishaku/pull/247>`_)
+
+Version 2.6.0
+-------------
+
+My username has changed. This version fixes package metadata associated with this as well as bringing the following (long-overdue) changes:
+
+- The ``jsk sql`` command, which will try to identify SQL adapters on your bot and provide an interface for using them.
+- ``python -m jishaku`` will now attempt to copy the automatically generated bot prefix to your clipboard if the appropriate libraries are installed.
+- Support for translations in ``jsk sync``
+- ``jsk cancel`` now uses Discord markdown timestamps to indicate when tasks were started.
+- ``jsk specialist`` works like `specialist <https://pypi.org/project/specialist/>`_ by executing Python code and reporting areas in which Python 3.11+ optimizations apply.
+- The version of ``import_expression`` used has been bumped, making inline imports possible again on new Python versions.
+- Some fixes to how ``jsk sh`` and similar commands work to make them function better on UNIX systems.
+
+Because it has been such a long time since the last formal release, a lot of these improvements have not received much field testing and may contain regressions. Please report any issues you find.
+
 Version 2.5.2
 -------------
 
 This version is a **backport release** to fix 3.12 and some other long-standing compatibility bugs.
 
-This **does not** contain any new features from master - it is a special bug fix only release. You can see the exact changes by `comparing tags on GitHub <https://github.com/Gorialis/jishaku/compare/2.5.1...2.5.2>`_.
+This **does not** contain any new features from master - it is a special bug fix only release. You can see the exact changes by `comparing tags on GitHub <https://github.com/scarletcafe/jishaku/compare/2.5.1...2.5.2>`_.
 
 Version 2.5.1
 -------------
@@ -135,7 +209,7 @@ A new implementation of PaginatorInterface has been created using Discord's inte
 It is available when using discord.py 2.0.0 or greater (currently alpha).
 
 Jishaku will now avoid uploading files either when detecting the author is on mobile or through an explicit ``JISHAKU_FORCE_PAGINATOR`` switch.
-This is to better support mobile platforms that do not have inline file previews yet. (`PR #111 <https://github.com/Gorialis/jishaku/pull/111>`_).
+This is to better support mobile platforms that do not have inline file previews yet. (`PR #111 <https://github.com/scarletcafe/jishaku/pull/111>`_).
 
 Humanize has been removed as a dependency. Selftest now uses Discord's own relative timestamp formatting markdown extension for timing,
 and pretty printing of memory usage has been implemented within the Feature itself.

@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.filesystem
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The jishaku filesystem-related commands.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -103,15 +101,17 @@ class FilesystemFeature(Feature):
         # remove embed maskers if present
         url = url.lstrip("<").rstrip(">")
 
-        async with ReplResponseReactor(ctx.message):
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    data = await response.read()
-                    hints = (
-                        response.content_type,
-                        url
-                    )
-                    code = response.status
+        async with (
+            ReplResponseReactor(ctx.message),
+            aiohttp.ClientSession() as session,
+            session.get(url) as response
+        ):
+            data = await response.read()
+            hints = (
+                response.content_type,
+                url
+            )
+            code = response.status
 
             if not data:
                 return await ctx.send(f"HTTP response was empty (status code {code}).")

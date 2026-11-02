@@ -1,23 +1,20 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.hljs
 ~~~~~~~~~~~~
 
 Constants and functions related to syntax highlighting with highlight.js
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
 import re
-import typing
 
 __all__ = (
+    'LANGUAGES',
     'get_language',
-    'guess_file_traits',
-    'LANGUAGES'
+    'guess_file_traits'
 )
 
 
@@ -354,7 +351,7 @@ def get_language(query: str) -> str:
 ENCODING_REGEX = re.compile(br'coding[=:]\s*([-\w.]+)')
 
 
-def guess_file_traits(data: bytes) -> typing.Tuple[str, str, typing.Optional[str]]:
+def guess_file_traits(data: bytes) -> tuple[str, str, str | None]:
     """
     Given the content of a file, attempts to guess its encoding and language.
 
@@ -379,7 +376,7 @@ def guess_file_traits(data: bytes) -> typing.Tuple[str, str, typing.Optional[str
         if encoding_match:
             encoding = encoding_match.group(1)
         else:
-            raise exc
+            raise
 
         try:
             encoding = encoding.decode('utf-8')

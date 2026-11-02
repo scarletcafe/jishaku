@@ -1,24 +1,22 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.disassembly
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Functions pertaining to the disassembly of Python code
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
 import ast
 import dis
+import opcode
 import sys
 import types
 import typing
 
 import import_expression  # type: ignore
-import opcode
 
 from jishaku.repl.scope import Scope
 
@@ -76,10 +74,63 @@ def wrap_code(code: str, args: str = '') -> ast.Module:
     return mod
 
 
+def format_instruction(
+    instruction: dis.Instruction,
+    lineno_width: int = 4,
+    mark_as_current: bool = False,
+    offset_width: int = 4
+) -> str:
+    # This code is largely the same as the CPython 3.12 implementation of Instruction._disassemble:
+    #  https://github.com/python/cpython/blob/3.12/Lib/dis.py
+    # This function was removed in 3.13 and replaced by one that only supports printing to the console:
+    #  https://github.com/python/cpython/blob/3.13/Lib/dis.py#L460
+    # Hence the 3.12 version is reproduced here.
+    opname_width: int = 20
+    oparg_width: int = 5
+
+    fields: list[str] = []
+
+    # Column: Source code line number
+    if lineno_width:
+        if instruction.starts_line:
+            lineno_fmt = f"%{lineno_width}d"
+            fields.append(lineno_fmt % instruction.starts_line)
+        else:
+            fields.append(' ' * lineno_width)
+
+    # Column: Current instruction indicator
+    if mark_as_current:
+        fields.append('-->')
+    else:
+        fields.append('   ')
+
+    # Column: Jump target marker
+    if instruction.is_jump_target:
+        fields.append('>>')
+    else:
+        fields.append('  ')
+
+    # Column: Instruction offset from start of code sequence
+    fields.append(repr(instruction.offset).rjust(offset_width))
+
+    # Column: Opcode name
+    fields.append(instruction.opname.ljust(opname_width))
+
+    # Column: Opcode argument
+    if instruction.arg is not None:
+        fields.append(repr(instruction.arg).rjust(oparg_width))
+
+        # Column: Opcode argument details
+        if instruction.argrepr:
+            fields.append('(' + instruction.argrepr + ')')
+
+    return ' '.join(fields).rstrip()
+
+
 def disassemble(
     code: str,
-    scope: typing.Optional[Scope] = None,
-    arg_dict: typing.Optional[typing.Dict[str, typing.Any]] = None
+    scope: Scope | None = None,
+    arg_dict: dict[str, typing.Any] | None = None
 ) -> typing.Generator[str, None, None]:
     """
     Disassembles asynchronous code into dis.dis-style bytecode instructions.
@@ -91,7 +142,7 @@ def disassemble(
     scope = scope or Scope()
 
     wrapped = wrap_code(code, args=', '.join(arg_names))
-    exec(compile(wrapped, '<repl>', 'exec'), scope.globals, scope.locals)  # pylint: disable=exec-used
+    exec(compile(wrapped, '<repl>', 'exec'), scope.globals, scope.locals)  # ruff: ignore[S102]
 
     func_def = scope.locals.get('_repl_coroutine') or scope.globals['_repl_coroutine']
 
@@ -100,14 +151,12 @@ def disassemble(
     ):
         instruction: dis.Instruction
 
-        if instruction.starts_line is not None and instruction.offset > 0:
+        if instruction.starts_line and instruction.offset > 0:
             yield ''
 
-        # pylint: disable=protected-access
-        yield instruction._disassemble(  # type: ignore
-            4, False, 4
+        yield format_instruction(
+            instruction, 4, False, 4
         )
-        # pylint: enable=protected-access
 
 
 TREE_CONTINUE = ('\N{BOX DRAWINGS HEAVY VERTICAL AND RIGHT}', '\N{BOX DRAWINGS HEAVY VERTICAL}')
@@ -123,7 +172,7 @@ def maybe_ansi(text: str, level: int, use_ansi: bool = True) -> str:
 
 
 def format_ast_block(
-    node: typing.Union[typing.List[ast.AST], ast.AST],
+    node: list[ast.AST] | ast.AST,
     header: str = '',
     level: int = 0,
     through: bool = False,
@@ -139,7 +188,7 @@ def format_ast_block(
     elif not isinstance(node, list):  # type: ignore
         branch, _ = TREE_CONTINUE if through else TREE_LAST
         branch = maybe_ansi(f"{branch} {header}: ", level, use_ansi)
-        yield f"{branch}{repr(node)}"
+        yield f"{branch}{node!r}"
         return
     elif not node:
         branch, _ = TREE_CONTINUE if through else TREE_LAST
@@ -163,7 +212,7 @@ def format_ast_block(
                 yield f"{stalk + (' ' * len(header.format(index)))} {description}"
 
 
-def format_ast_node(node: typing.Optional[ast.AST], level: int = 0, use_ansi: bool = True) -> typing.Generator[str, None, None]:
+def format_ast_node(node: ast.AST | None, level: int = 0, use_ansi: bool = True) -> typing.Generator[str, None, None]:
     """
     Recursively formats an AST node structure
 
@@ -190,7 +239,7 @@ def format_ast_node(node: typing.Optional[ast.AST], level: int = 0, use_ansi: bo
 
     else:
         if use_ansi:
-            yield f"\u001b[1;4m{repr(node)}\u001b[0m"
+            yield f"\u001b[1;4m{node!r}\u001b[0m"
         else:
             yield repr(node)
 
@@ -218,11 +267,11 @@ def recurse_code(code: types.CodeType) -> typing.Generator[types.CodeType, None,
 
 if sys.version_info >= (3, 11):
     try:
-        SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset(opcode._specialized_opmap.keys())  # type: ignore  # pylint: disable=protected-access,no-member
+        SPECIALIZED_INSTRUCTIONS: set[str] = frozenset(opcode._specialized_opmap.keys())  # type: ignore  # pylint: disable=protected-access,no-member
     except AttributeError:
-        SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset(opcode._specialized_instructions)  # type: ignore  # pylint: disable=protected-access,no-member
+        SPECIALIZED_INSTRUCTIONS: set[str] = frozenset(opcode._specialized_instructions)  # type: ignore  # pylint: disable=protected-access,no-member
 else:
-    SPECIALIZED_INSTRUCTIONS: typing.Set[str] = frozenset()
+    SPECIALIZED_INSTRUCTIONS: set[str] = frozenset()
 
 SUPERINSTRUCTIONS = frozenset(
     {
@@ -254,10 +303,10 @@ SUPERINSTRUCTIONS = frozenset(
 
 
 def get_adaptive_spans(code: types.CodeType) -> typing.Generator[
-    typing.Tuple[
+    tuple[
         dis.Instruction,
         int,
-        typing.Optional[typing.Tuple[int, int]],
+        tuple[int, int] | None,
         bool, bool
     ],
     None, None

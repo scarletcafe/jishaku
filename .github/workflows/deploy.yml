@@ -14,22 +14,23 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         python:
-          - {version: '3.8'}
-          - {version: '3.9'}
           - {version: '3.10'}
           - {version: '3.11'}
           - {version: '3.12'}
+          - {version: '3.13'}
+          - {version: '3.14'}
+          - {version: '3.15'}
         discord-py:
           - {NAME: 'pypi', PIP_TARGET: 'discord.py[voice]'}
           - {NAME: 'git', PIP_TARGET: 'discord.py[voice] @ git+https://github.com/Rapptz/discord.py@master'}
     name: "${{ matrix.os }} CPython ${{ matrix.python.version }} with ${{ matrix.discord-py.NAME }} discord.py"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python.version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python.version }}
 
@@ -38,10 +39,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip setuptools wheel
 
-        # Temporary - remove me
-        pip install aiohttp==3.9.0b0
+        # 3.13 needs audioop-lts
+        pip install -U "audioop-lts; python_version>='3.13'"
 
-        pip install -U "${{ matrix.discord-py.PIP_TARGET }}" --extra-index-url https://gorialis.github.io/pip/
+        pip install -U "${{ matrix.discord-py.PIP_TARGET }}" --extra-index-url https://scarletcafe.github.io/pip/
         pip install -U $(find requirements -name *.txt -print | sed -e 's/^/-r /' | tr '\n' ' ')
 
     - name: Test from local directory
@@ -52,20 +53,15 @@ jobs:
     - name: Lint repository
       shell: bash
       run: |
-        echo "flake8:"
-        flake8 .
-        echo "pylint:"
-        pylint jishaku
-        echo "isort:"
-        isort . --check-only
+        ruff check
 
     - name: Create distributions and install wheel
       shell: bash
       run: |
-        export tag_name="${GITHUB_REF##*/}"
+        export version_name="${GITHUB_REF##*/tags/versions/v}"
 
         # Substitute README assets with direct GitHub links
-        sed -i'.original' -e "s/src=\".github\/assets/src=\"https:\/\/raw.githubusercontent.com\/Gorialis\/jishaku\/$(git rev-parse HEAD)\/.github\/assets/g" README.md
+        sed -i'.original' -e "s/src=\".github\/assets/src=\"https:\/\/raw.githubusercontent.com\/scarletcafe\/jishaku\/$(git rev-parse HEAD)\/.github\/assets/g" README.md
         rm -f README.md.original
 
         python ./setup.py sdist bdist_wheel
@@ -83,60 +79,71 @@ jobs:
         cd docs && make html
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
-        name: distributions
+        name: distributions-${{ matrix.os }}-${{ matrix.python.version }}-${{ matrix.discord-py.NAME }}
         path: dist/*
 
   upload_pypi:
     needs: [ build-dists ]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
+    environment: publish
+    permissions:
+      # Required to create release
+      contents: write
+      # Required for OIDC
+      id-token: write
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/versions/v')
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           submodules: true
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.15
+        uses: actions/setup-python@v7
         with:
-          python-version: '3.12'  # Watch as I let this get handled as a float again
+          python-version: '3.15'  # Watch as I let this get handled as a float again
 
       - name: Install dependencies
         shell: bash
         run: |
-          sudo apt-get update && sudo apt-get install -y hub
           python -m pip install --upgrade pip setuptools wheel
-          export tag_name="${GITHUB_REF##*/}"
+          export version_name="${GITHUB_REF##*/tags/versions/v}"
           pip install -U ".[publish]"
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v8
         with:
-          name: distributions
+          # There is currently a bug where download-artifact downloading multiple files of the same name corrupts the file.
+          # https://github.com/actions/download-artifact/issues/298
+          # Very cool.
+          # We don't have any native code so using the latest Ubuntu artifact should be OK.
+          #pattern: distributions-*
+          pattern: distributions-ubuntu-latest-3.15-pypi
+          merge-multiple: true
           path: dist
 
       - name: Publish wheels as release artifacts on GitHub
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -x
-          export tag_name="${GITHUB_REF##*/}"
+          export tag_name="${GITHUB_REF##*/tags/}"
           python create_dist_summary.py
           assets=()
-          for asset in ./dist/*.{whl,egg,tar.gz}; do
-            assets+=("-a" "$asset")
+          for asset in ./dist/*.{whl,tar.gz}; do
+            assets+=("$asset")
           done
-          tag_name="${GITHUB_REF##*/}"
-          hub release create "${assets[@]}" -F ./dist/DIST_SUMMARY.md "$tag_name"
+
+          tag_name="${GITHUB_REF##*/tags/}"
+          release_name="$(cat ./dist/RELEASE_NAME.md)"
+          gh release create "${tag_name}" --draft --title "${release_name}" --notes-file ./dist/RELEASE_SUMMARY.md "${assets[@]}"
+          gh release edit "${tag_name}" --draft=false
           rm ./dist/*.md
 
       - name: Publish packages to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.8.10
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_api_token }}
+        uses: pypa/gh-action-pypi-publish@v1.14.3

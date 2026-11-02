@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 MIT License
 
-Copyright (c) 2021 Devon (Gorialis) R
+Copyright (c) 2024 Devon (scarletcafe) R
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +47,7 @@ class File(typing.NamedTuple):
 
 
 ENVIRONMENT = Environment(loader=BaseLoader())
-FILES: typing.List[File] = []
+FILES: list[File] = []
 
 for file in pathlib.Path('dist').iterdir():
     if file.is_file() and file.name.lower().endswith(('.whl', '.egg', '.tar.gz')):
@@ -88,7 +87,10 @@ commit_hash = commit_hash.decode('utf-8').strip()
 with open('dist_summary.jinja2', 'r', encoding='utf-8') as fp:
     template: Template = ENVIRONMENT.from_string(fp.read())
 
-with open('dist/DIST_SUMMARY.md', 'w', encoding='utf-8') as fp:
+with open('dist/RELEASE_NAME.md', 'w', encoding='utf-8') as fp:
+    fp.write(importlib.metadata.distribution('jishaku').version)
+
+with open('dist/RELEASE_SUMMARY.md', 'w', encoding='utf-8') as fp:
     output = template.render(
         env=os.getenv,
         package=importlib.metadata.distribution('jishaku'),

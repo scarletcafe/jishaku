@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku manual multiclass test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,7 +9,7 @@ without conflicting with eachother.
 Execute this test from the repository using:
 python -m tests.manual_test_multiclass "$BOT_TOKEN"
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -20,7 +18,6 @@ import asyncio
 import logging
 import logging.handlers
 import sys
-import typing
 
 import click
 import discord
@@ -34,7 +31,7 @@ LOADABLES = (
 
 
 async def async_entrypoint(token: str):
-    bots: typing.List[commands.Bot] = []
+    bots: list[commands.Bot] = []
 
     for prefix, extension in LOADABLES:
         bot = commands.Bot(prefix, intents=discord.Intents.all())

@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl.walkers
 ~~~~~~~~~~~~~~~~~~~~
 
 AST walkers for code transformation and analysis.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
 import ast
-import typing
 
 # pylint: disable=missing-docstring
 
@@ -36,7 +33,7 @@ class KeywordTransformer(ast.NodeTransformer):
         # Do not affect nested class definitions
         return node
 
-    def visit_Return(self, node: ast.Return) -> typing.Union[ast.Return, ast.If]:
+    def visit_Return(self, node: ast.Return) -> ast.Return | ast.If:
         # Do not modify valueless returns
         if node.value is None:
             return node
@@ -111,10 +108,7 @@ class KeywordTransformer(ast.NodeTransformer):
                         ),
                         ops=[
                             # in
-                            ast.In(
-                                lineno=node.lineno,
-                                col_offset=node.col_offset
-                            )
+                            ast.In()
                         ],
                         comparators=[
                             # globals()

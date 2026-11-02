@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku ast tree generation test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:copyright: (c) 2022 Devon (Gorialis) R
+:copyright: (c) 2022 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """

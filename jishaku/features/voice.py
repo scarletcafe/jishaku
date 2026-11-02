@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.voice
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The jishaku core voice-related commands.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
-import typing
 
 import discord
 import discord.opus
@@ -105,7 +102,7 @@ class VoiceFeature(Feature):
         self,
         ctx: ContextA,
         *,
-        destination: typing.Union[discord.VoiceChannel, discord.Member] = None  # type: ignore
+        destination: discord.VoiceChannel | discord.Member = None  # type: ignore
     ):
         """
         Joins a voice channel, or moves to it if already connected.

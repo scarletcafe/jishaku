@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.features.management
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The jishaku extension and bot control commands.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -43,14 +41,12 @@ class ManagementFeature(Feature):
     """
 
     @Feature.Command(parent="jsk", name="load", aliases=["reload"])
-    async def jsk_load(self, ctx: ContextA, *extensions: ExtensionConverter):  # type: ignore
+    async def jsk_load(self, ctx: ContextA, *extensions: typing.Annotated[list[str], ExtensionConverter]):  # type: ignore
         """
         Loads or reloads the given extension names.
 
         Reports any extensions that failed to load.
         """
-
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
 
@@ -67,7 +63,7 @@ class ManagementFeature(Feature):
 
             try:
                 await discord.utils.maybe_coroutine(method, extension)
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # ruff: ignore[BLE001]
                 if isinstance(exc, commands.ExtensionFailed) and exc.__cause__:
                     cause = exc.__cause__
                     traceback_data = ''.join(traceback.format_exception(type(cause), cause, cause.__traceback__, 8))
@@ -85,14 +81,12 @@ class ManagementFeature(Feature):
             await ctx.send(page)
 
     @Feature.Command(parent="jsk", name="unload")
-    async def jsk_unload(self, ctx: ContextA, *extensions: ExtensionConverter):  # type: ignore
+    async def jsk_unload(self, ctx: ContextA, *extensions: typing.Annotated[list[str], ExtensionConverter]):  # type: ignore
         """
         Unloads the given extension names.
 
         Reports any extensions that failed to unload.
         """
-
-        extensions: typing.Iterable[typing.List[str]] = extensions  # type: ignore
 
         paginator = commands.Paginator(prefix='', suffix='')
         icon = "\N{OUTBOX TRAY}"
@@ -100,7 +94,7 @@ class ManagementFeature(Feature):
         for extension in itertools.chain(*extensions):
             try:
                 await discord.utils.maybe_coroutine(self.bot.unload_extension, extension)
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # ruff: ignore[BLE001]
                 traceback_data = "".join(traceback.format_exception(type(exc), exc, exc.__traceback__, 2))
 
                 paginator.add_line(
@@ -162,9 +156,9 @@ class ManagementFeature(Feature):
         message = None
 
         # We'll show each of these readings as well as an average and standard deviation.
-        api_readings: typing.List[float] = []
+        api_readings: list[float] = []
         # We'll also record websocket readings, but we'll only provide the average.
-        websocket_readings: typing.List[float] = []
+        websocket_readings: list[float] = []
 
         # We do 6 iterations here.
         # This gives us 5 visible readings, because a request can't include the stats for itself.
@@ -218,8 +212,8 @@ class ManagementFeature(Feature):
             return
 
         paginator = commands.Paginator(prefix='', suffix='')
-
         guilds_set: typing.Set[typing.Optional[int]] = set(flags.clear)
+
         for target in flags.targets:
             if target == '$':
                 guilds_set.add(None)
@@ -240,7 +234,7 @@ class ManagementFeature(Feature):
         if not (flags.targets or flags.clear):
             guilds_set.add(None)
 
-        guilds: typing.List[typing.Optional[int]] = list(guilds_set)
+        guilds: list[int | None] = list(guilds_set)
         guilds.sort(key=lambda g: (g is not None, g))
 
         for guild in guilds:
@@ -276,7 +270,7 @@ class ManagementFeature(Feature):
 
             except discord.HTTPException as error:
                 # It's diagnosis time
-                error_lines: typing.List[str] = []
+                error_lines: list[str] = []
                 for line in str(error).split("\n"):
                     error_lines.append(line)
 
@@ -326,10 +320,10 @@ class ManagementFeature(Feature):
                                     ":",
                                     str(inspections.line_span_inspection(to_inspect)),  # type: ignore
                                 ]))
-                            except Exception:  # pylint: disable=broad-except
+                            except Exception:  # ruff: ignore[BLE001]
                                 error_lines.append(f"\N{MAGNET} This is likely caused by: `{name}`")
 
-                    except Exception as diag_error:  # pylint: disable=broad-except
+                    except Exception as diag_error:  # ruff: ignore[BLE001]
                         error_lines.append(f"\N{MAGNET} Couldn't determine cause: {type(diag_error).__name__}: {diag_error}")
 
                 error_text = '\n'.join(error_lines)

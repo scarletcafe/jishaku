@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.repl internal test
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
 
 import inspect
 import random
-import typing
 
 import pytest
 
@@ -67,7 +64,7 @@ def test_scope_var():
     ]
 )
 @pytest.mark.asyncio
-async def test_executor_basic(code: str, expected: typing.List[int]):
+async def test_executor_basic(code: str, expected: list[int]):
     return_data: list[int] = []
     async for result in AsyncCodeExecutor(code):
         return_data.append(result)
@@ -101,7 +98,7 @@ async def test_executor_basic(code: str, expected: typing.List[int]):
     ]
 )
 @pytest.mark.asyncio
-async def test_executor_advanced(code: str, expected: typing.List[typing.Optional[int]], arg_dict: typing.Optional[typing.Dict[str, int]], scope: Scope):
+async def test_executor_advanced(code: str, expected: list[int | None], arg_dict: dict[str, int] | None, scope: Scope):
 
     return_data: list[int | None] = []
     async for result in AsyncCodeExecutor(code, scope, arg_dict=arg_dict):
@@ -159,7 +156,7 @@ async def test_executor_builtins(scope: Scope):
 
     assert 'ensure_builtins' in scope.globals, "Checking function remains defined"
     assert callable(scope.globals['ensure_builtins']), "Checking defined is callable"
-    assert scope.globals['ensure_builtins']() == ValueError, "Checking defined return consistent"
+    assert scope.globals['ensure_builtins']() is ValueError, "Checking defined return consistent"
 
 
 @pytest.mark.asyncio
@@ -170,3 +167,20 @@ async def test_var_dict(scope: Scope):
         assert scope.globals['_ctx'] is ctx
         assert scope.globals['_bot'] is ctx.bot
         assert scope.globals['_message'] is ctx.message
+
+
+@pytest.mark.asyncio
+async def test_executor_delete_retained_variable():
+    retained_scope = Scope()
+    async for _ in AsyncCodeExecutor("value = 42", retained_scope):
+        pass
+
+    assert retained_scope.globals['value'] == 42
+
+    async for _ in AsyncCodeExecutor("del value", retained_scope):
+        pass
+
+    assert 'value' not in retained_scope.globals
+    with pytest.raises(NameError):
+        async for _ in AsyncCodeExecutor("value", retained_scope):
+            pass

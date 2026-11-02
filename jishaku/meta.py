@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.meta
 ~~~~~~~~~~~~
 
 Meta information about jishaku.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -33,10 +31,10 @@ class VersionInfo(typing.NamedTuple):
     serial: int
 
 
-version_info = VersionInfo(major=2, minor=6, micro=0, releaselevel='final', serial=0)
+version_info = VersionInfo(major=2, minor=8, micro=1, releaselevel='final', serial=0)
 
-__author__ = 'Gorialis'
-__copyright__ = 'Copyright 2021 Devon (Gorialis) R'
+__author__ = 'scarletcafe'
+__copyright__ = 'Copyright 2021 Devon (scarletcafe) R'
 __docformat__ = 'restructuredtext en'
 __license__ = 'MIT'
 __title__ = 'jishaku'

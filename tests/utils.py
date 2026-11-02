@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku test utils
 ~~~~~~~~~~~~~~~~~~~~~~
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -65,7 +63,7 @@ def nested_mocks(ctx, standards, coros):
 
 
 @contextlib.contextmanager
-def mock_ctx(bot: commands.Bot = None):
+def mock_ctx(bot: commands.Bot | None = None):
     ctx = mock.MagicMock(name='ctx')
 
     standard_mocks = []

@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.models
 ~~~~~~~~~~~~~~
 
 Functions for modifying or interfacing with discord.py models.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -22,8 +20,8 @@ from jishaku.types import ContextT
 async def copy_context_with(
     ctx: ContextT,
     *,
-    author: typing.Optional[typing.Union[discord.Member, discord.User]] = None,
-    channel: typing.Optional[discord.TextChannel] = None,
+    author: discord.Member | discord.User | None = None,
+    channel: discord.TextChannel | None = None,
     **kwargs: typing.Any
 ) -> ContextT:
     """

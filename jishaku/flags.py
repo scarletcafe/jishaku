@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 """
 jishaku.flags
 ~~~~~~~~~~~~~~
 
 The Jishaku cog base, which contains most of the actual functionality of Jishaku.
 
-:copyright: (c) 2021 Devon (Gorialis) R
+:copyright: (c) 2021 Devon (scarletcafe) R
 :license: MIT, see LICENSE for more details.
 
 """
@@ -14,6 +12,7 @@ The Jishaku cog base, which contains most of the actual functionality of Jishaku
 import dataclasses
 import inspect
 import os
+import sys
 import typing
 
 import discord
@@ -24,7 +23,7 @@ ENABLED_SYMBOLS = ("true", "t", "yes", "y", "on", "1")
 DISABLED_SYMBOLS = ("false", "f", "no", "n", "off", "0")
 
 
-FlagHandler = typing.Optional[typing.Callable[['FlagMeta'], typing.Any]]
+FlagHandler = typing.Callable[['FlagMeta'], typing.Any] | None
 
 
 @dataclasses.dataclass
@@ -92,19 +91,39 @@ class FlagMeta(type):
     def __new__(
         cls,
         name: str,
-        base: typing.Tuple[typing.Type[typing.Any]],
-        attrs: typing.Dict[str, typing.Any]
+        base: tuple[type[typing.Any]],
+        attrs: dict[str, typing.Any]
     ):
         attrs['flag_map'] = {}
 
-        for flag_name, flag_type in attrs['__annotations__'].items():
-            default: typing.Union[
-                FlagHandler,
-                typing.Tuple[
-                    FlagHandler,  # default
-                    FlagHandler,  # handler
-                ],
-            ] = attrs.pop(flag_name, None)
+        if '__annotations__' in attrs:
+            annotations = attrs['__annotations__']
+
+            first = next(iter(annotations.values()))
+            if isinstance(first, str):
+                raise RuntimeError(
+                    f'{name} has stringified annotations; does the module '
+                    f'contain from __future__ import annotations?'
+                )
+
+        elif sys.version_info >= (3, 14):
+            # https://docs.python.org/3/library/annotationlib.html#annotationlib-metaclass
+            # From 3.14 onwards, __annotations__ is a data descriptor not included
+            # in the class namespace. Instead, the compiler defines an __annotate__
+            # function we can call to evaluate annotations.
+            import annotationlib
+
+            annotate = annotationlib.get_annotate_from_class_namespace(attrs)
+            if annotate is not None:
+                fmt = annotationlib.Format.VALUE
+                annotations = annotationlib.call_annotate_function(annotate, format=fmt)
+            else:
+                annotations = {}
+        else:
+            annotations = {}
+
+        for flag_name, flag_type in annotations.items():
+            default: FlagHandler | tuple[FlagHandler, FlagHandler] = attrs.pop(flag_name, None)
             handler: FlagHandler = None
 
             if isinstance(default, tuple):
@@ -112,10 +131,10 @@ class FlagMeta(type):
 
             attrs['flag_map'][flag_name] = Flag(flag_name, flag_type, default, handler)
 
-        return super(FlagMeta, cls).__new__(cls, name, base, attrs)
+        return super().__new__(cls, name, base, attrs)
 
     def __getattr__(cls, name: str):
-        cls.flag_map: typing.Dict[str, Flag]
+        cls.flag_map: dict[str, Flag]  # ruff: ignore[B032]: I know this is weird but without it pyright gets so confused
 
         if hasattr(cls, 'flag_map') and name in cls.flag_map:
             return cls.flag_map[name].resolve(cls)
@@ -168,7 +187,7 @@ class Flags(metaclass=FlagMeta):  # pylint: disable=too-few-public-methods
     ALWAYS_DM_TRACEBACK: bool
 
     @classmethod
-    def traceback_destination(cls, message: discord.Message) -> typing.Optional[discord.abc.Messageable]:
+    def traceback_destination(cls, message: discord.Message) -> discord.abc.Messageable | None:
         """
         Determine what 'default' location to send tracebacks to
         When None, the caller should decide
