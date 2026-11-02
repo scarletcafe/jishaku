@@ -231,22 +231,25 @@ class ManagementFeature(Feature):
                 except ValueError as error:
                     raise commands.BadArgument(f"{target} is not a valid guild ID") from error
 
-        if not (flags.targets or flags.clear):
+        if not flags.targets and not flags.clear:
             guilds_set.add(None)
 
-        guilds: list[int | None] = list(guilds_set)
+        guilds: list[typing.Optional[int]] = list(guilds_set)
         guilds.sort(key=lambda g: (g is not None, g))
 
         for guild in guilds:
-            slash_commands = self.bot.tree._get_all_commands(  # type: ignore  # pylint: disable=protected-access
-                guild=discord.Object(guild) if guild else None
-            )
+
+            if guild in flags.clear:
+                slash_commands = []
+            else:
+                slash_commands = self.bot.tree._get_all_commands(  # type: ignore  # pylint: disable=protected-access
+                    guild=discord.Object(guild) if guild else None
+                )
+
             translator = getattr(self.bot.tree, 'translator', None)
             needs_dpy_2_4_signature_changes = discord.version_info.major >= 2 and discord.version_info.minor >= 4
 
-            if guild in flags.clear:
-                payload = []
-            elif needs_dpy_2_4_signature_changes:
+            if needs_dpy_2_4_signature_changes:
                 if translator:
                     payload = [await command.get_translated_payload(self.bot.tree, translator) for command in slash_commands]
                 else:
