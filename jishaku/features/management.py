@@ -27,6 +27,14 @@ from jishaku.repl import inspections
 from jishaku.types import ContextA
 
 
+class SyncFlags(commands.FlagConverter, prefix="", delimiter=""):
+    """
+    A flag converter for the sync command.
+    """
+    targets: typing.Tuple[str, ...] = commands.flag(positional=True, default=())
+    clear: typing.List[int] = commands.flag(aliases=["-"], default=[])
+
+
 class ManagementFeature(Feature):
     """
     Feature containing the extension and bot control commands
@@ -194,7 +202,7 @@ class ManagementFeature(Feature):
     SLASH_COMMAND_ERROR = re.compile(r"In ((?:\d+\.[a-z]+\.?)+)")
 
     @Feature.Command(parent="jsk", name="sync")
-    async def jsk_sync(self, ctx: ContextA, *targets: str):
+    async def jsk_sync(self, ctx: ContextA, *, flags: SyncFlags):
         """
         Sync global or guild application commands to Discord.
         """
@@ -204,9 +212,9 @@ class ManagementFeature(Feature):
             return
 
         paginator = commands.Paginator(prefix='', suffix='')
+        guilds_set: typing.Set[typing.Optional[int]] = set(flags.clear)
 
-        guilds_set: set[int | None] = set()
-        for target in targets:
+        for target in flags.targets:
             if target == '$':
                 guilds_set.add(None)
             elif target == '*':
@@ -223,16 +231,21 @@ class ManagementFeature(Feature):
                 except ValueError as error:
                     raise commands.BadArgument(f"{target} is not a valid guild ID") from error
 
-        if not targets:
+        if not flags.targets and not flags.clear:
             guilds_set.add(None)
 
-        guilds: list[int | None] = list(guilds_set)
+        guilds: list[typing.Optional[int]] = list(guilds_set)
         guilds.sort(key=lambda g: (g is not None, g))
 
         for guild in guilds:
-            slash_commands = self.bot.tree._get_all_commands(  # type: ignore  # pylint: disable=protected-access
-                guild=discord.Object(guild) if guild else None
-            )
+
+            if guild in flags.clear:
+                slash_commands = []
+            else:
+                slash_commands = self.bot.tree._get_all_commands(  # type: ignore  # pylint: disable=protected-access
+                    guild=discord.Object(guild) if guild else None
+                )
+
             translator = getattr(self.bot.tree, 'translator', None)
             needs_dpy_2_4_signature_changes = discord.version_info.major >= 2 and discord.version_info.minor >= 4
 
